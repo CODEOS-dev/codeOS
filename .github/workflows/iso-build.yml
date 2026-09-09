@@ -120,8 +120,11 @@ jobs:
         id: prep
         run: |
           mkdir -p build/workdir/{packages,airootfs,efiboot/loader,grub,i686-pc,any,out}
+          # 合并基础包，排除 Omarchy 自定义工具包（它们的源码已在 bin/ 里，直接 cp）
           cat install/omarchy-base.packages install/omarchy-other.packages \
-            | sed '/^#/d' | sed '/^$/d' | sort -u > build/workdir/packages/base.txt
+            | sed '/^#/d' | sed '/^$/d' | sort -u \
+            | grep -vE '^(asdcontrol|cliamp|herdr|omacalc|omacut|omarchy-nvim|omawrite|sushi|tensaku|tobi-try)$' \
+            > build/workdir/packages/base.txt
           EXTRA="${{ needs.parse-and-confirm.outputs.extra_packages_json }}"
           echo "$EXTRA" | python3 -c "
           import sys, json
