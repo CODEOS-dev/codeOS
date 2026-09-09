@@ -1,0 +1,65 @@
+name: 构建失败报告 / Build Failure Report
+description: ISO 构建或 CI 失败反馈 / Report ISO build or CI failure
+title: "[Bug] "
+labels: ["bug", "build-failure"]
+assignees: ["cangcang"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        报告构建失败。请保持下面的错误日志原样粘贴，帮助定位问题。
+        Report build failure. Keep the error log below as-is for debugging.
+
+        ---
+
+  - type: dropdown
+    id: build_type
+    attributes:
+      label: 构建类型 / Build Type
+      options:
+        - label: 定制 ISO / Custom ISO
+        - label: 每日常规 ISO / Daily Standard ISO
+        - label: 其他 CI / Other CI
+    validations:
+      required: true
+
+  - type: input
+    id: run_url
+    attributes:
+      label: Actions Run URL
+      description: 失败的构建链接 / Link to the failed run
+      placeholder: https://github.com/CODEOS-dev/codeOS/actions/runs/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra_packages
+    attributes:
+      label: 额外包 / Extra Packages
+      description: 如果是定制 ISO，列出请求的额外包 / If custom ISO, list requested extra packages
+      placeholder: |
+        aur:visual-studio-code-bin
+        firefox
+        github-cli
+        nodejs
+
+  - type: textarea
+    id: error_log
+    attributes:
+      label: 错误日志 / Error Log
+      description: GitHub Actions 构建日志中最后 100-200 行，原样粘贴 / Last 100-200 lines from Actions run log, paste as-is
+      placeholder: |
+        [PREFIX] archiso - ERROR: ...
+        [PREFIX] pacman - ERROR: ...
+        make[1]: *** [all] Error 1
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 备注 / Notes
+      description: 其他信息（可选） / Anything else (optional)
+      placeholder: 比如之前的 Issue 编号 / e.g. related issue #1

@@ -290,15 +290,86 @@ jobs:
     needs: [build-iso]
     if: always() && needs.build-iso.result == 'failure'
     steps:
-      - run: |
+      - name: 抓取错误注解 / Fetch failure annotations
+        id: fetch
+        run: |
           ISSUE="${{ needs.check-label.outputs.issue_number }}"
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          RUN_ID="${{ github.run_id }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN_ID}"
+          REPO="${{ github.repository }}"
+          ORIG_ISSUE_URL="${{ github.server_url }}/${{ github.repository }}/issues/$ISSUE"
+
+          ANNOTATIONS=$(gh api repos/$REPO/actions/runs/$RUN_ID/jobs \
+            --jq '.jobs[].steps[] | select(.conclusion=="failure") | .name as $name | {step: $name, annotations: .annotations[]?} | select(.annotations != null) | "\(.step): \(.annotations.message // "") \(.annotations.rawDetails // "")"' 2>/dev/null \
+            | head -20)
+          [ -z "$ANNOTATIONS" ] && ANNOTATIONS="(no annotations)"
+
+          FAILED_JOBS=$(gh api repos/$REPO/actions/runs/$RUN_ID/jobs \
+            --jq '[.jobs[] | select(.conclusion=="failure") | .name] | join(", ")' 2>/dev/null)
+
+          PACKAGES="${{ needs.parse-and-confirm.outputs.extra_packages_json }}"
+          BUILD_TYPE="${{ needs.parse-and-confirm.outputs.build_type }}"
+
+          # 生成预填 bug report URL
           {
-            echo "### ❌ ISO 构建失败 / Build failed"
+            echo "### Run URL"
+            echo "$RUN_URL"
             echo ""
-            echo "查看 Actions 日志: $RUN_URL"
+            echo "### Build Type"
+            echo "$BUILD_TYPE"
             echo ""
-            echo "请关闭后重新提交 / Close and open a new issue"
+            echo "### Extra Packages"
+            echo '```json'
+            echo "$PACKAGES"
+            echo '```'
+            echo ""
+            echo "### Error Log"
+            echo '```'
+            echo "$ANNOTATIONS"
+            echo '```'
+            echo ""
+            echo "### Related"
+            echo "Original: $ORIG_ISSUE_URL"
+          } > /tmp/bug_body_raw.txt
+
+          python3 -c "import sys,urllib.parse as u; b=open('/tmp/bug_body_raw.txt').read(); t=u.quote('ISO Build Failure - #${ISSUE}'); print('${{ github.server }}/${{ github.repository }}/issues/new?title='+t+'&body='+u.quote(b)+'&labels=bug,build-failure&template=build-bug.yml')" > /tmp/bug_url.txt
+          BUG_URL=$(cat /tmp/bug_url.txt)
+
+          echo "annotations<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$ANNOTATIONS" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "run_url=$RUN_URL" >> "$GITHUB_OUTPUT"
+          echo "bug_url=$BUG_URL" >> "$GITHUB_OUTPUT"
+          echo "failed_jobs=$FAILED_JOBS" >> "$GITHUB_OUTPUT"
+
+      - name: 评论到 Issue / Comment on Issue
+        run: |
+          ISSUE="${{ needs.check-label.outputs.issue_number }}"
+          FAILED_JOBS="${{ steps.fetch.outputs.failed_jobs }}"
+          RUN_URL="${{ steps.fetch.outputs.run_url }}"
+          ANNOTATIONS="${{ steps.fetch.outputs.annotations }}"
+          BUG_URL="${{ steps.fetch.outputs.bug_url }}"
+          {
+            echo "### ❌ 构建发生意外导致失败 / Build failed unexpectedly"
+            echo ""
+            echo "**失败 Jobs / Failed jobs**: $FAILED_JOBS"
+            echo ""
+            echo "**Actions Run**: [$RUN_URL]($RUN_URL)"
+            echo ""
+            echo "**错误摘要 / Error summary**:"
+            echo ""
+            echo '```'
+            echo "$ANNOTATIONS"
+            echo '```'
+            echo ""
+            echo "---"
+            echo ""
+            echo "### 🐛 快速反馈 / Quick Report"
+            echo ""
+            echo "点击下方按钮，错误信息已自动预填到 bug report 模板。"
+            echo "Click the button below — error details are pre-filled in the bug report template."
+            echo ""
+            echo "[**📋 自动提交反馈 / Auto-fill Bug Report**]($BUG_URL)"
           } > /tmp/issue_comment.md
           gh issue comment "$ISSUE" --body-file /tmp/issue_comment.md --repo "${{ github.repository }}"
           gh issue edit "$ISSUE" --remove-label iso-build --repo "${{ github.repository }}"
