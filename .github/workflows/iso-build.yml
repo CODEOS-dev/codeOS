@@ -1,11 +1,9 @@
-name: 定制 ISO 构建 / Custom ISO Build
+name: ISO 定制构建 / Custom ISO Build
 
-# Triggered when an Issue is opened with label "iso-build" (from our template)
 on:
   issues:
     types: [opened, labeled]
 
-# Prevent concurrent ISO builds
 concurrency:
   group: iso-build-${{ github.event.issue.number || 'manual' }}
   cancel-in-progress: false
@@ -15,7 +13,6 @@ permissions:
   contents: write
 
 jobs:
-  # Check if this issue actually has iso-build label
   check-label:
     name: 检查标签 / Check Label
     runs-on: ubuntu-latest
@@ -39,7 +36,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Parse issue body, validate packages, post confirmation comment
   parse-and-confirm:
     name: 解析请求 / Parse Request
     runs-on: ubuntu-latest
@@ -56,34 +52,23 @@ jobs:
         run: |
           ISSUE_NUMBER="${{ needs.check-label.outputs.issue_number }}"
           BODY=$(gh api repos/${{ github.repository }}/issues/${ISSUE_NUMBER} --jq '.body' 2>/dev/null)
-
-          # Extract build_type — look for Standard vs Custom
           BUILD_TYPE=$(echo "$BODY" | grep -ioE '(Standard|Custom)' | head -1 | tr '[:upper:]' '[:lower:]')
           [ -z "$BUILD_TYPE" ] && BUILD_TYPE="standard"
           echo "build_type=$BUILD_TYPE" >> "$GITHUB_OUTPUT"
-
-          # Extract extra packages from the dedicated textarea section
           EXTRA=$(echo "$BODY" | sed -n '/额外包列表\|Extra Packages/,/备注\|Notes/p' \
             | grep -v '^#' | grep -v '^##' | grep -v '|' | grep -v '^$' \
             | sed 's/`//g' | sed 's/^[[:space:]]*- //' | sed '/每行\|one package\|one per line/Id')
-
-          # Validate package names — allow:
-          #   normal arch: [a-zA-Z0-9][a-zA-Z0-9._+-]*
-          #   AUR prefixed: aur:<above>
-          # Block shell metacharacters / paths / weird stuff
           VALID=""
           INVALID=""
           while IFS= read -r pkg; do
             [ -z "$pkg" ] && continue
-            pkg=$(echo "$pkg" | xargs)  # trim
+            pkg=$(echo "$pkg" | xargs)
             if echo "$pkg" | grep -qE '^(aur:)?[a-zA-Z0-9][a-zA-Z0-9._+-]*$'; then
               VALID="$VALID $pkg"
             else
               INVALID="$INVALID $pkg"
             fi
           done <<< "$EXTRA"
-
-          # Build JSON array
           VALID_JSON="["
           FIRST=true
           for pkg in $VALID; do
@@ -92,50 +77,53 @@ jobs:
           done
           VALID_JSON+="]"
           echo "extra_packages_json=$VALID_JSON" >> "$GITHUB_OUTPUT"
-
           if [ -n "$INVALID" ]; then
             echo "validation_ok=false" >> "$GITHUB_OUTPUT"
           else
             echo "validation_ok=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # Post confirmation
       - if: steps.parse.outputs.validation_ok == 'true'
         run: |
           ISSUE_NUMBER="${{ needs.check-label.outputs.issue_number }}"
           BUILD_TYPE="${{ steps.parse.outputs.build_type }}"
           PKGS="${{ steps.parse.outputs.extra_packages_json }}"
-
           [ "$BUILD_TYPE" = "custom" ] && TYPE_TEXT="定制版 / Custom" || TYPE_TEXT="常规版 / Standard"
           [ "$BUILD_TYPE" = "standard" ] && PKGS="[]"
-
-          COMMENT=$(cat << EOF
-### ✅ 构建请求已接收 / Build request received
-
-**构建类型 / Build type**: $TYPE_TEXT
-
-**基础 ISO**: 完整 codeOS 系统（Hyprland + Quickshell + 所有 CLI + Shell 插件 + 默认配置）
-**Base ISO**: Full codeOS (Hyprland + Quickshell + all CLI + Shell plugins + default config)
-
-**额外包 / Extra packages**:
-\`\`\`json
-$PKGS
-\`\`\`
-
-⏳ 预计 15-25 分钟完成 / ETA 15-25 min
-EOF
-)
-          gh issue comment "$ISSUE_NUMBER" --body "$COMMENT" --repo "${{ github.repository }}"
+          {
+            echo "### ✅ 构建请求已接收 / Build request received"
+            echo ""
+            echo "**构建类型 / Build type**: $TYPE_TEXT"
+            echo ""
+            echo "**基础 ISO**: 完整 codeOS 系统（Hyprland + Quickshell + 所有 CLI + Shell 插件 + 默认配置）"
+            echo "**Base ISO**: Full codeOS (Hyprland + Quickshell + all CLI + Shell plugins + default config)"
+            echo ""
+            echo "**额外包 / Extra packages**:"
+            echo "\`\`\`json"
+            echo "$PKGS"
+            echo "\`\`\`"
+            echo ""
+            echo "⏳ 预计 15-25 分钟完成 / ETA 15-25 min"
+          } > /tmp/issue_comment.md
+          gh issue comment "$ISSUE_NUMBER" --body-file /tmp/issue_comment.md --repo "${{ github.repository }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - if: steps.parse.outputs.validation_ok != 'true'
         run: |
           ISSUE_NUMBER="${{ needs.check-label.outputs.issue_number }}"
-          gh issue comment "$ISSUE_NUMBER" \
-            --body $'### ❌ 包名校验失败 / Package validation failed\n\n请检查额外包名称（只能含字母数字、下划线、连字符、点号；AUR 用 `aur:包名`）。\n\n请关闭后重新提交。Please close and open a new issue.' \
-            --repo "${{ github.repository }}"
+          {
+            echo "### ❌ 包名校验失败 / Package validation failed"
+            echo ""
+            echo "请检查额外包名称（只能含字母数字、下划线、连字符、点号；AUR 用 \`aur:包名\`）。"
+            echo ""
+            echo "Please close and open a new issue."
+          } > /tmp/issue_comment.md
+          gh issue comment "$ISSUE_NUMBER" --body-file /tmp/issue_comment.md --repo "${{ github.repository }}"
           gh issue close "$ISSUE_NUMBER" --repo "${{ github.repository }}" --reason "invalid"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Build ISO
   build-iso:
     name: 构建 ISO / Build ISO
     runs-on: ubuntu-latest
@@ -151,164 +139,105 @@ EOF
         with:
           fetch-depth: 1
 
-      - name: 构建包列表 + codeOS 完整内容 / Build pkg list + copy codeOS root
+      - name: 准备 / Prepare
         id: prep
         run: |
           mkdir -p build/workdir/{packages,airootfs,efiboot/loader,grub,i686-pc,any,out}
-
-          # 1. packages.x86_64 = omarchy-base + omarchy-other + 用户追加
           cat install/omarchy-base.packages install/omarchy-other.packages \
             | sed '/^#/d' | sed '/^$/d' | sort -u > build/workdir/packages/base.txt
-
           EXTRA="${{ needs.parse-and-confirm.outputs.extra_packages_json }}"
           echo "$EXTRA" | python3 -c "
-import sys, json
-for p in json.load(sys.stdin):
-    print(p[4:] if p.startswith('aur:') else p)
-" >> build/workdir/packages/base.txt
-
+          import sys, json
+          for p in json.load(sys.stdin):
+              print(p[4:] if p.startswith('aur:') else p)
+          " >> build/workdir/packages/base.txt
           sort -u build/workdir/packages/base.txt -o build/workdir/packages/base.txt
-
-          echo "=== 包列表 (${#packages[@]} unique) ==="
-          wc -l build/workdir/packages/base.txt
-          echo "base + extra packages ready"
-
-          # 2. codeOS 仓库完整内容放进 airootfs
-          # Omarchy 原本是一个 pacman 包 (omarchy) 安装到 /usr/share/omarchy
-          # 我们直接 cp 仓库内容到相同位置
+          echo "📦 基础包+额外包: $(wc -l < build/workdir/packages/base.txt) 个"
           mkdir -p build/workdir/airootfs/usr/share/omarchy
           for d in bin shell themes default config install etc plans default/agents skills; do
             [ -d "$d" ] && cp -r "$d" build/workdir/airootfs/usr/share/omarchy/
           done
-          for f in version logo.svg README.md build/profile/profiledef.sh; do
+          for f in version logo.svg README.md; do
             [ -f "$f" ] && cp "$f" build/workdir/airootfs/usr/share/omarchy/ 2>/dev/null || true
           done
-
-          # 3. 创建 /usr/local/bin 链接，让 codeOS 命令可直接使用
           mkdir -p build/workdir/airootfs/usr/local/bin
           for cmd in bin/*; do
-            name=$(basename "$cmd")
-            ln -sf "/usr/share/omarchy/bin/$name" \
-              "build/workdir/airootfs/usr/local/bin/$name"
+            ln -sf "/usr/share/omarchy/bin/$(basename "$cmd")" "build/workdir/airootfs/usr/local/bin/$(basename "$cmd")"
           done
-          # develop 命令别名也链接一下
-          ln -sf "/usr/share/omarchy/bin/omarchy" \
-            "build/workdir/airootfs/usr/local/bin/develop"
-
-          # 4. 设置 OMARCHY_PATH / PATH 环境变量
+          ln -sf "/usr/share/omarchy/bin/omarchy" "build/workdir/airootfs/usr/local/bin/develop"
           mkdir -p build/workdir/airootfs/etc/profile.d
-          cat > build/workdir/airootfs/etc/profile.d/codeos.sh << 'PROFILE_EOF'
-# codeOS environment
-export OMARCHY_PATH=/usr/share/omarchy
-export PATH="$OMARCHY_PATH/bin:$PATH"
-PROFILE_EOF
+          echo 'export OMARCHY_PATH=/usr/share/omarchy' > build/workdir/airootfs/etc/profile.d/codeos.sh
+          echo 'export PATH="$OMARCHY_PATH/bin:$PATH"' >> build/workdir/airootfs/etc/profile.d/codeos.sh
           chmod +x build/workdir/airootfs/etc/profile.d/codeos.sh
-
-          # 5. pacman.conf 镜像源配置
           mkdir -p build/workdir/airootfs/etc/pacman.d
-          cat default/pacman/mirrorlist-stable \
-              default/pacman/mirrorlist-rc \
-              default/pacman/mirrorlist-edge \
-            | sed '/^#/d' | sed '/^$/d' \
-            > build/workdir/airootfs/etc/pacman.d/mirrorlist
-
-          # 6. locale.conf — 中文
-          cat > build/workdir/airootfs/etc/locale.conf << 'LOCALE_EOF'
-LANG=zh_CN.UTF-8
-LANGUAGE=zh_CN:zh:en_US:en
-LOCALE_EOF
-
-          # 7. live 用户 bashrc 也加上 codeOS
-          cat >> build/workdir/airootfs/root/.bashrc << 'ALIAS_EOF'
-
-# codeOS
-export OMARCHY_PATH=/usr/share/omarchy
-export PATH="$OMARCHY_PATH/bin:$PATH"
-alias develop=omarchy
-ALIAS_EOF
-
-          # 8. 验证
-          CODEOS_SIZE=$(du -sh build/workdir/airootfs/usr/share/omarchy 2>/dev/null | cut -f1)
-          echo "✅ codeOS 仓库内容已复制到 airootfs ($CODEOS_SIZE)"
-          ls build/workdir/airootfs/usr/share/omarchy/ | head -15
-
-          # 9. 准备 profile 配置
+          cat default/pacman/mirrorlist-stable default/pacman/mirrorlist-rc default/pacman/mirrorlist-edge \
+            | sed '/^#/d' | sed '/^$/d' > build/workdir/airootfs/etc/pacman.d/mirrorlist
+          echo 'LANG=zh_CN.UTF-8' > build/workdir/airootfs/etc/locale.conf
+          echo 'LANGUAGE=zh_CN:zh:en_US:en' >> build/workdir/airootfs/etc/locale.conf
+          cat >> build/workdir/airootfs/root/.bashrc << 'EOF'
+          export OMARCHY_PATH=/usr/share/omarchy
+          export PATH="$OMARCHY_PATH/bin:$PATH"
+          alias develop=omarchy
+          EOF
+          CODEOS_SIZE=$(du -sh build/workdir/airootfs/usr/share/omarchy | cut -f1)
+          echo "✅ codeOS airootfs ($CODEOS_SIZE)"
           cp -rn build/profile/* build/workdir/ 2>/dev/null || true
 
-          echo "iso_name=codeOS-${{ needs.parse-and-confirm.outputs.build_type }}-issue${{ needs.check-label.outputs.issue_number }}-$(date +%Y%m%d-%H%M).iso" >> "$GITHUB_OUTPUT"
-
-      - name: Docker 内构建 ISO / Build ISO in Docker
+      - name: Docker 构建 / Build in Docker
         run: |
           ISSUE="${{ needs.check-label.outputs.issue_number }}"
           BUILD_TYPE="${{ needs.parse-and-confirm.outputs.build_type }}"
           TS=$(date +%Y%m%d-%H%M)
           ISO_NAME="codeOS-${BUILD_TYPE}-issue${ISSUE}-${TS}.iso"
-
+          echo "iso_name=$ISO_NAME" >> "$GITHUB_ENV"
           docker run --rm --privileged \
             -v "$PWD/build/workdir:/workdir" \
             -v "$PWD/out:/out" \
             archlinux:latest \
             bash -c '
-              set -e
-              pacman-key --init && pacman-key --populate archlinux
-              pacman -Syu --noconfirm
-              pacman -S --noconfirm archiso mkarchiso
+          set -e
+          pacman-key --init && pacman-key --populate archlinux
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm archiso mkarchiso
+          cd /workdir
+          echo "#!/bin/bash" > profiledef.sh
+          echo 'iso_name="codeOS"' >> profiledef.sh
+          echo 'iso_label="codeOS '"$(date +%Y%m)"'" >> profiledef.sh
+          echo 'iso_publisher="codeOS <https://github.com/CODEOS-dev/codeOS>"' >> profiledef.sh
+          echo 'iso_application="codeOS Live ISO"' >> profiledef.sh
+          echo 'iso_version="'"$(date +%Y.%m.%d)"'" >> profiledef.sh
+          echo 'install_dir="arch"' >> profiledef.sh
+          chmod +x profiledef.sh
+          mkarchiso -v -w /tmp/iso-work -o /out \
+            -C /workdir/packages/base.txt \
+            -L "codeOS Build #'"$ISSUE"'" \
+            -A x86_64
+          mv /out/codeOS-*.iso "/out/'"$ISO_NAME"'" 2>/dev/null || true
+          ls -lh /out/
+          ' 2>&1 | tail -60
 
-              cd /workdir
-
-              # 如果没写 profile 配置，自动生成最小化的
-              cat > profiledef.sh << "PROFILE_EOF"
-#!/bin/bash
-iso_name="codeOS"
-iso_label="codeOS '"$(date +%Y%m)
-iso_publisher="codeOS <https://github.com/CODEOS-dev/codeOS>"
-iso_application="codeOS Live ISO"
-iso_version="'"$(date +%Y.%m.%d)
-
-install_dir="arch"
-PROFILE_EOF
-              chmod +x profiledef.sh
-
-              # 构建 — mkarchiso 会安装 packages/base.txt 里的所有包到 airootfs
-              # 然后我们之前已经把完整的 codeOS 内容放进了 airootfs/usr/share/omarchy/
-              # 所以构建完成后 ISO 里 = pacman 基础包 + codeOS 仓库内容
-              mkarchiso -v -w /tmp/iso-work -o /out \
-                -C /workdir/packages/base.txt \
-                -L "codeOS ${BUILD_TYPE} Build #${ISSUE}" \
-                -A x86_64
-
-              # 重命名
-              mv /out/codeOS-*.iso "/out/'$ISO_NAME'" 2>/dev/null || true
-              ls -lh /out/
-            ' 2>&1 | tail -50
-
-      - name: 上传产物 / Upload artifact
+      - name: 上传 / Upload
         id: artifact
         if: always()
         run: |
           ISO=$(ls out/*.iso 2>/dev/null | head -1)
           if [ -n "$ISO" ]; then
-            SIZE=$(du -h "$ISO" | cut -f1)
             NAME=$(basename "$ISO")
+            SIZE=$(du -h "$ISO" | cut -f1)
             echo "✅ $NAME ($SIZE)"
             echo "iso_name=$NAME" >> "$GITHUB_OUTPUT"
-            echo "download_url=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" >> "$GITHUB_OUTPUT"
           else
-            echo "❌ No ISO found"
+            echo "❌ No ISO"
             exit 1
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: upload-artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         if: steps.artifact.outcome == 'success'
         with:
           name: ${{ steps.artifact.outputs.iso_name }}
           path: out/*.iso
           retention-days: 14
 
-  # Post success to issue
   post-success:
     name: 回传成功 / Post Success
     runs-on: ubuntu-latest
@@ -318,30 +247,25 @@ PROFILE_EOF
       - run: |
           ISSUE="${{ needs.check-label.outputs.issue_number }}"
           ISO_NAME="${{ needs.build-iso.outputs.iso_name }}"
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           DL_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+          {
+            echo "### ✅ ISO 构建完成 / Build complete"
+            echo ""
+            echo "**文件名 / File**: \`$ISO_NAME\`"
+            echo "**类型 / Type**: ${{ needs.parse-and-confirm.outputs.build_type }}"
+            echo ""
+            echo "**下载 / Download**: [点击下载 (14 天有效)]($DL_URL)"
+            echo ""
+            echo "✅ 包含完整 codeOS 系统 + 基础包 + 额外追加包"
+            echo "✅ Full codeOS + base packages + extra packages included"
+            echo ""
+            echo "⏱ 10 小时无反馈将自动关闭 / Auto-close in 10h if no feedback"
+          } > /tmp/issue_comment.md
+          gh issue comment "$ISSUE" --body-file /tmp/issue_comment.md --repo "${{ github.repository }}"
+          gh issue edit "$ISSUE" --remove-label iso-build --add-label iso-delivered --repo "${{ github.repository }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          COMMENT=$(cat << EOF
-### ✅ ISO 构建完成 / Build complete
-
-**文件名 / File**: \`$ISO_NAME\`
-**类型 / Type**: ${{ needs.parse-and-confirm.outputs.build_type }}
-
-**下载 / Download**: [点击下载 (14 天有效)]($DL_URL)
-
-💡 包含完整 codeOS 系统（Hyprland + Quickshell + 所有 CLI 工具 + Shell 插件 + 默认配置 + 本土化 + Minecraft 主题）
-💡 10 小时内若无进一步反馈，此 Issue 将自动关闭。
-
-Full codeOS included. Auto-close in 10h if no further feedback.
-EOF
-)
-          gh issue comment "$ISSUE" --body "$COMMENT" --repo "${{ github.repository }}"
-          gh issue edit "$ISSUE" \
-            --remove-label iso-build \
-            --add-label iso-delivered \
-            --repo "${{ github.repository }}"
-
-  # Post failure to issue
   post-failure:
     name: 报告失败 / Report Failure
     runs-on: ubuntu-latest
@@ -351,17 +275,14 @@ EOF
       - run: |
           ISSUE="${{ needs.check-label.outputs.issue_number }}"
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          COMMENT=$(cat << EOF
-### ❌ ISO 构建失败 / Build failed
-
-构建出错，请查看 Actions 日志排查。
-Check the Actions run log for details.
-
-[Actions Run]($RUN_URL)
-
-请关闭此 Issue 后重新提交。
-Close this issue and open a new one.
-EOF
-)
-          gh issue comment "$ISSUE" --body "$COMMENT" --repo "${{ github.repository }}"
+          {
+            echo "### ❌ ISO 构建失败 / Build failed"
+            echo ""
+            echo "查看 Actions 日志: $RUN_URL"
+            echo ""
+            echo "请关闭后重新提交 / Close and open a new issue"
+          } > /tmp/issue_comment.md
+          gh issue comment "$ISSUE" --body-file /tmp/issue_comment.md --repo "${{ github.repository }}"
           gh issue edit "$ISSUE" --remove-label iso-build --repo "${{ github.repository }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

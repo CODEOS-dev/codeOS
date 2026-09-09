@@ -1,6 +1,5 @@
 name: Issue 自动关闭 / Auto Close Delivered Issues
 
-# Run every hour. Close delivered iso-build issues with no activity for 10h.
 on:
   schedule:
     - cron: "0 * * * *"
@@ -15,57 +14,38 @@ jobs:
     name: 检查并关闭 / Check and Close
     runs-on: ubuntu-latest
     steps:
-      - name: 列出已交付的 Issue / List delivered issues
-        id: list
+      - name: 遍历已交付 Issue / Scan delivered issues
         run: |
-          # Get all open issues with iso-delivered label
+          NOW=$(date -u +%s)
+          TEN_HOURS=$((10 * 3600))
+          REPO="${{ github.repository }}"
           ISSUES=$(gh issue list \
             --label "iso-delivered" \
             --state open \
             --limit 100 \
-            --json number,url,updatedAt,title \
-            --repo "${{ github.repository }}" 2>/dev/null || echo "[]")
-
-          COUNT=$(echo "$ISSUES" | python3 -c "import sys, json; print(len(json.load(sys.stdin)))")
-          echo "Found $COUNT open issues with iso-delivered label"
-          echo "$ISSUES"
-
-      - name: 遍历并关闭超时 Issue / Iterate and close
-        run: |
-          NOW=$(date -u +%s)
-          TEN_HOURS=$((10 * 3600))
-
-          echo "$ISSUES" | python3 -c "
-import sys, json
-issues = json.load(sys.stdin)
-for it in issues:
-    print(f'{it[\"number\"]} {it[\"updatedAt\"]}')
-" | while read -r NUM UPDATED_AT; do
+            --json number,updatedAt \
+            --repo "$REPO" 2>/dev/null || echo "[]")
+          echo "$ISSUES" | python3 -c "import sys,json; [print(i['number']+' '+i['updatedAt']) for i in json.load(sys.stdin)]" | while read -r NUM UPDATED_AT; do
             UPD_TS=$(date -u -d "$UPDATED_AT" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$UPDATED_AT" +%s 2>/dev/null || echo "$NOW")
             DIFF=$((NOW - UPD_TS))
             HOURS=$((DIFF / 3600))
-
-            echo "Issue #$NUM: last activity ${HOURS}h ago"
-
+            echo "Issue #$NUM: ${HOURS}h since last activity"
             if [ "$DIFF" -gt "$TEN_HOURS" ]; then
-              echo "  → 超时，关闭 / Expired, closing"
-              COMMENT=$(cat << EOF
-### 🕐 自动关闭 / Auto-closed
-
-此 Issue 已交付 ISO 下载链接，并且超过 **10 小时** 没有进一步反馈，故自动关闭。
-This issue has been delivered and had no further activity for over **10 hours**, so it closes automatically.
-
-如果还有问题或需要定制新版本，请新建 Issue。
-If you have more questions or need a new custom build, please open a new issue.
-
-— codeOS Bot 🤖
-EOF
-)
-              gh issue comment "$NUM" --body "$COMMENT" --repo "${{ github.repository }}" || true
-              gh issue close "$NUM" --repo "${{ github.repository }}" || true
+              echo "  → Closing"
+              {
+                echo "### 🕐 自动关闭 / Auto-closed"
+                echo ""
+                echo "此 Issue 已交付 ISO 下载链接，并且超过 **10 小时** 没有进一步反馈，故自动关闭。"
+                echo "This issue has been delivered and had no activity for over **10 hours**, auto-closing."
+                echo ""
+                echo "如有新需求请新建 Issue / Open a new issue for new requests."
+                echo ""
+                echo "— codeOS Bot"
+              } > /tmp/close_comment.md
+              gh issue comment "$NUM" --body-file /tmp/close_comment.md --repo "$REPO" || true
+              gh issue close "$NUM" --repo "$REPO" || true
             else
-              REMAIN=$(( (TEN_HOURS - DIFF) / 3600 ))
-              echo "  → 还剩 ${REMAIN}h / ${HOURS}h passed, keeping open"
+              echo "  → Keeping open"
             fi
           done
         env:
