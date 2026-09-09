@@ -1,0 +1,27 @@
+<svg fill="none" height="285" viewBox="0 0 855 285" width="855" xmlns="http://www.w3.org/2000/svg">
+<!--
+  CODEOS — codeOS logo
+  直角几何字体，无圆角，统一 15px 笔画宽度
+  主色 #4aa26f
+  基于 Omarchy logo 同款风格重制
+-->
+<g fill="#4aa26f">
+  <!-- C: 外框正方形，右侧开口 -->
+  <path d="m30 30h15v150h-15v15h60v-15h-45v-120h45v-15h-60z"/>
+
+  <!-- O: 外框空心正方形 -->
+  <path d="m150 30h60v15h-45v120h45v15h-60z m15 30h30v90h-30z"/>
+
+  <!-- D: 左侧竖 + 右侧方框 + 中间横线 -->
+  <path d="m270 30h15v150h-15v15h60v-15h-45v-120h45v-15h-60z m30 30h15v90h-15z"/>
+
+  <!-- E: 左侧竖 + 三条横 -->
+  <path d="m390 30h15v150h-15v15h60v-15h-45v-45h30v-15h-30v-45h45v-15h-60z"/>
+
+  <!-- O (第二个) -->
+  <path d="m510 30h60v15h-45v120h45v15h-60z m15 30h30v90h-30z"/>
+
+  <!-- S: 分段方块堆叠 -->
+  <path d="m630 30h60v15h-45v45h30v15h-30v45h45v15h-60z"/>
+</g>
+</svg>

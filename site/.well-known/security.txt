@@ -1,0 +1,6 @@
+Contact: mailto:security@codeOS.org
+Expires: 2027-08-29T23:59:59Z
+Preferred-Languages: en
+Canonical: https://codeOS.org/.well-known/security.txt
+Policy: https://codeOS.org/security
+Acknowledgments: https://codeOS.org/security/credits

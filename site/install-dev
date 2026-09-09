@@ -1,0 +1,2 @@
+OMARCHY_REF=dev
+eval "$(curl -fsSL https://raw.githubusercontent.com/basecamp/codeOS/refs/heads/dev/boot.sh)"

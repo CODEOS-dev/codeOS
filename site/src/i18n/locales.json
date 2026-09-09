@@ -1,0 +1,228 @@
+{
+  "en": {
+    "name": "English",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "en-US",
+    "ogLocale": "en_US",
+    "manual": true
+  },
+  "zh-CN": {
+    "name": "简体中文",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "zh-CN",
+    "ogLocale": "zh_CN",
+    "manual": true,
+    "flag": "CN"
+  },
+  "da": {
+    "name": "Dansk",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "da-DK",
+    "ogLocale": "da_DK",
+    "manual": false
+  },
+  "ar": {
+    "name": "العربية",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "ar-AE",
+    "ogLocale": "ar_AE",
+    "manual": false,
+    "direction": "rtl"
+  },
+  "fi": {
+    "name": "Suomi",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "fi-FI",
+    "ogLocale": "fi_FI",
+    "manual": false
+  },
+  "fr": {
+    "name": "Français",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "fr-FR",
+    "ogLocale": "fr_FR",
+    "manual": false
+  },
+  "el": {
+    "name": "Ελληνικά",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "el-GR",
+    "ogLocale": "el_GR",
+    "manual": false
+  },
+  "hu": {
+    "name": "Magyar",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "hu-HU",
+    "ogLocale": "hu_HU",
+    "manual": false
+  },
+  "hi": {
+    "name": "हिन्दी",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "hi-IN",
+    "ogLocale": "hi_IN",
+    "manual": false
+  },
+  "is": {
+    "name": "Íslenska",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "is-IS",
+    "ogLocale": "is_IS",
+    "manual": false
+  },
+  "ja": {
+    "name": "日本語",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "ja-JP",
+    "ogLocale": "ja_JP",
+    "manual": false
+  },
+  "ko": {
+    "name": "한국어",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "ko-KR",
+    "ogLocale": "ko_KR",
+    "manual": false
+  },
+  "es-MX": {
+    "name": "Español (México)",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "es-MX",
+    "ogLocale": "es_MX",
+    "manual": false
+  },
+  "fil": {
+    "name": "Filipino",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "fil-PH",
+    "ogLocale": "fil_PH",
+    "manual": false
+  },
+  "pt": {
+    "name": "Português",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "pt-PT",
+    "ogLocale": "pt_PT",
+    "manual": false
+  },
+  "sv": {
+    "name": "Svenska",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "sv-SE",
+    "ogLocale": "sv_SE",
+    "manual": false
+  },
+  "tr": {
+    "name": "Türkçe",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "tr-TR",
+    "ogLocale": "tr_TR",
+    "manual": false
+  },
+  "vi": {
+    "name": "Tiếng Việt",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "vi-VN",
+    "ogLocale": "vi_VN",
+    "manual": false,
+    "flag": "VN"
+  },
+  "ur": {
+    "name": "اردو",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "ur-PK",
+    "ogLocale": "ur_PK",
+    "manual": false,
+    "flag": "PK",
+    "direction": "rtl"
+  },
+  "bn": {
+    "name": "বাংলা",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "bn-BD",
+    "ogLocale": "bn_BD",
+    "manual": false,
+    "flag": "BD"
+  },
+  "ca": {
+    "name": "Català",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "ca-AD",
+    "ogLocale": "ca_ES",
+    "manual": false,
+    "flag": "AD"
+  },
+  "si": {
+    "name": "සිංහල",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "si-LK",
+    "ogLocale": "si_LK",
+    "manual": false,
+    "flag": "LK"
+  },
+  "ta": {
+    "name": "தமிழ்",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "ta-LK",
+    "ogLocale": "ta_LK",
+    "manual": false,
+    "flag": "LK"
+  },
+  "th": {
+    "name": "ไทย",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "th-TH",
+    "ogLocale": "th_TH",
+    "manual": false,
+    "flag": "TH"
+  },
+  "uz": {
+    "name": "Oʻzbekcha",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "uz-UZ",
+    "ogLocale": "uz_UZ",
+    "manual": false,
+    "flag": "UZ"
+  },
+  "it": {
+    "name": "Italiano",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "it-IT",
+    "ogLocale": "it_IT",
+    "manual": false,
+    "flag": "IT"
+  },
+  "pl": {
+    "name": "Polski",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "pl-PL",
+    "ogLocale": "pl_PL",
+    "manual": false,
+    "flag": "PL"
+  },
+  "lt": {
+    "name": "Lietuvių",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "lt-LT",
+    "ogLocale": "lt_LT",
+    "manual": false,
+    "flag": "LT"
+  },
+  "ga": {
+    "name": "Gaeilge",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "ga-IE",
+    "ogLocale": "ga_IE",
+    "manual": false,
+    "flag": "IE"
+  },
+  "nl": {
+    "name": "Nederlands",
+    "domain": "https://codeos-dev.github.io/codeOS/",
+    "formatLocale": "nl-NL",
+    "ogLocale": "nl_NL",
+    "manual": false,
+    "flag": "NL"
+  }
+}

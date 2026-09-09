@@ -1,0 +1,732 @@
+[
+ {
+  "repo": "https://github.com/JJDizz1L/aetheria",
+  "image": "/assets/themes/aetheria.webp",
+  "name": "Aetheria"
+ },
+ {
+  "repo": "https://github.com/tahfizhabib/codeOS-amberbyte-theme",
+  "image": "/assets/themes/amberbyte.webp",
+  "name": "Amberbyte"
+ },
+ {
+  "repo": "https://github.com/vale-c/codeOS-arc-blueberry",
+  "image": "/assets/themes/arc-blueberry.webp",
+  "name": "Arc Blueberry"
+ },
+ {
+  "repo": "https://github.com/davidguttman/archwave",
+  "image": "/assets/themes/archwave.webp",
+  "name": "Archwave"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-ash-theme",
+  "image": "/assets/themes/ash.webp",
+  "name": "Ash"
+ },
+ {
+  "repo": "https://github.com/tahfizhabib/codeOS-artzen-theme",
+  "image": "/assets/themes/artzen.webp",
+  "name": "Artzen"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-aura-theme",
+  "image": "/assets/themes/aura.webp",
+  "name": "Aura"
+ },
+ {
+  "repo": "https://github.com/guilhermetk/codeOS-all-hallows-eve-theme",
+  "image": "/assets/themes/all-hallow-s-eve.webp",
+  "name": "All Hallow's Eve"
+ },
+ {
+  "repo": "https://github.com/atif-1402/codeOS-atelier-theme",
+  "image": "/assets/themes/atelier.webp",
+  "name": "Atelier"
+ },
+ {
+  "repo": "https://github.com/abhijeet-swami/codeOS-ayaka-theme",
+  "image": "/assets/themes/ayaka.webp",
+  "name": "Ayaka"
+ },
+ {
+  "repo": "https://github.com/Hydradevx/codeOS-azure-glow-theme",
+  "image": "/assets/themes/azure-glow.webp",
+  "name": "Azure Glow"
+ },
+ {
+  "repo": "https://github.com/OldJobobo/codeOS-batman-theme",
+  "image": "/assets/themes/batman.webp",
+  "name": "Batman"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-batou-theme",
+  "image": "/assets/themes/batou.webp",
+  "name": "Batou"
+ },
+ {
+  "repo": "https://github.com/somerocketeer/codeOS-bauhaus-theme",
+  "image": "/assets/themes/bauhaus.webp",
+  "name": "Bauhaus"
+ },
+ {
+  "repo": "https://github.com/OldJobobo/codeOS-biscuit-de-mar-dark-theme",
+  "image": "/assets/themes/biscuit-de-mar-dark.webp",
+  "name": "Biscuit de Mar Dark"
+ },
+ {
+  "repo": "https://github.com/ankur311sudo/black_arch",
+  "image": "/assets/themes/black-arch.webp",
+  "name": "Black Arch"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-blackgold-theme",
+  "image": "/assets/themes/black-gold.webp",
+  "name": "Black Gold"
+ },
+ {
+  "repo": "https://github.com/pkovzz/codeOS-black-sand-theme",
+  "image": "/assets/themes/black-sand.webp",
+  "name": "Black Sand"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-blackturq-theme",
+  "image": "/assets/themes/black-turq.webp",
+  "name": "Black Turq"
+ },
+ {
+  "repo": "https://github.com/dotsilva/codeOS-bluedotrb-theme",
+  "image": "/assets/themes/bluedotrb.webp",
+  "name": "bluedotrb"
+ },
+ {
+  "repo": "https://github.com/hipsterusername/codeOS-blueridge-dark-theme",
+  "image": "/assets/themes/blue-ridge-dark.webp",
+  "name": "Blue Ridge Dark"
+ },
+ {
+  "repo": "https://github.com/shmall03/codeOS-castle-on-a-lake-theme",
+  "image": "/assets/themes/castle-on-a-lake.webp",
+  "name": "Castle on a Lake"
+ },
+ {
+  "repo": "https://github.com/Luquatic/codeOS-catppuccin-dark",
+  "image": "/assets/themes/catppuccin-mocha-dark.webp",
+  "name": "Catppuccin Mocha Dark"
+ },
+ {
+  "repo": "https://github.com/jkwuc89/codeOS-cincinnati-theme",
+  "image": "/assets/themes/cincinnati.webp",
+  "name": "Cincinnati"
+ },
+ {
+  "repo": "https://github.com/Grey-007/citrus-cynapse",
+  "image": "/assets/themes/citrus-cynapse.webp",
+  "name": "Citrus Cynapse"
+ },
+ {
+  "repo": "https://github.com/OldJobobo/codeOS-city-783-theme",
+  "image": "/assets/themes/city-783.webp",
+  "name": "City-783"
+ },
+ {
+  "repo": "https://github.com/hoblin/codeOS-cobalt2-theme",
+  "image": "/assets/themes/cobalt2.webp",
+  "name": "Cobalt2"
+ },
+ {
+  "repo": "https://github.com/megabyte0x/codeOS-coffee-theme",
+  "image": "/assets/themes/coffee.webp",
+  "name": "Coffee"
+ },
+ {
+  "repo": "https://github.com/megabyte0x/codeOS-coffee-latte-theme",
+  "image": "/assets/themes/coffee-latte.webp",
+  "name": "Coffee Latte"
+ },
+ {
+  "repo": "https://github.com/c0ze/codeOS-commit-theme",
+  "image": "/assets/themes/commit.webp",
+  "name": "Commit"
+ },
+ {
+  "repo": "https://github.com/stannorbvb-cmd/cpunk",
+  "image": "/assets/themes/cpunk.webp",
+  "name": "CpUnk"
+ },
+ {
+  "repo": "https://github.com/knappkevin/codeOS-crimson-gold-theme",
+  "image": "/assets/themes/crimson-gold.webp",
+  "name": "Crimson Gold"
+ },
+ {
+  "repo": "https://github.com/noahljungberg/codeOS-darcula-theme",
+  "image": "/assets/themes/darcula.webp",
+  "name": "Darcula"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-demon-theme",
+  "image": "/assets/themes/demon.webp",
+  "name": "Demon"
+ },
+ {
+  "repo": "https://github.com/dotsilva/codeOS-dotrb-theme",
+  "image": "/assets/themes/dotrb.webp",
+  "name": "Dotrb"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-dos-moos-theme",
+  "image": "/assets/themes/dos-moos.webp",
+  "name": "Dos Moos"
+ },
+ {
+  "repo": "https://github.com/ShehabShaef/codeOS-drac-theme",
+  "image": "/assets/themes/drac.webp",
+  "name": "Drac"
+ },
+ {
+  "repo": "https://github.com/catlee/codeOS-dracula-theme",
+  "image": "/assets/themes/dracula.webp",
+  "name": "Dracula"
+ },
+ {
+  "repo": "https://github.com/eldritch-theme/codeOS",
+  "image": "/assets/themes/eldritch.webp",
+  "name": "Eldritch"
+ },
+ {
+  "repo": "https://github.com/OldJobobo/codeOS-event-horizon-theme",
+  "image": "/assets/themes/event-horizon.webp",
+  "name": "Event Horizon"
+ },
+ {
+  "repo": "https://github.com/celsobenedetti/codeOS-evergarden",
+  "image": "/assets/themes/evergarden.webp",
+  "name": "Evergarden"
+ },
+ {
+  "repo": "https://github.com/TyRichards/codeOS-felix-theme",
+  "image": "/assets/themes/felix.webp",
+  "name": "Felix"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-fireside-theme",
+  "image": "/assets/themes/fireside.webp",
+  "name": "Fireside"
+ },
+ {
+  "repo": "https://github.com/OldJobobo/codeOS-flat-dracula-theme",
+  "image": "/assets/themes/flat-dracula.webp",
+  "name": "Flat Dracula"
+ },
+ {
+  "repo": "https://github.com/euandeas/codeOS-flexoki-dark-theme",
+  "image": "/assets/themes/flexoki-dark.webp",
+  "name": "Flexoki Dark"
+ },
+ {
+  "repo": "https://github.com/abhijeet-swami/codeOS-forest-green-theme",
+  "image": "/assets/themes/forest-green.webp",
+  "name": "Forest Green"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-frost-theme",
+  "image": "/assets/themes/frost.webp",
+  "name": "Frost"
+ },
+ {
+  "repo": "https://github.com/fuchsblau/codeOS-fuchsblau-theme",
+  "image": "/assets/themes/fuchsblau.webp",
+  "name": "fuchsblau"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-futurism-theme",
+  "image": "/assets/themes/futurism.webp",
+  "name": "Futurism"
+ },
+ {
+  "repo": "https://github.com/benwillems/codeOS-futurist-theme",
+  "image": "/assets/themes/futurist.webp",
+  "name": "Futurist"
+ },
+ {
+  "repo": "https://github.com/c0ze/codeOS-gand-theme",
+  "image": "/assets/themes/gand.webp",
+  "name": "Gand"
+ },
+ {
+  "repo": "https://github.com/row-huh/codeOS-ghost-pastel-theme",
+  "image": "/assets/themes/ghost-pastel.webp",
+  "name": "Ghost Pastel"
+ },
+ {
+  "repo": "https://github.com/tahayvr/codeOS-gold-rush-theme",
+  "image": "/assets/themes/gold-rush.webp",
+  "name": "Gold Rush"
+ },
+ {
+  "repo": "https://github.com/atif-1402/codeOS-golden-brown-theme",
+  "image": "/assets/themes/golden-brown.webp",
+  "name": "Golden Brown"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-thegreek-theme",
+  "image": "/assets/themes/the-greek.webp",
+  "name": "The Greek"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-greek-noir-theme",
+  "image": "/assets/themes/greek-noir.webp",
+  "name": "Greek Noir"
+ },
+ {
+  "repo": "https://github.com/kalk-ak/codeOS-green-garden-theme",
+  "image": "/assets/themes/green-garden.webp",
+  "name": "Green Garden"
+ },
+ {
+  "repo": "https://github.com/curbol/codeOS-gruvbox-material",
+  "image": "/assets/themes/gruvbox-material.webp",
+  "name": "Gruvbox Material"
+ },
+ {
+  "repo": "https://github.com/ankur311sudo/gruvu",
+  "image": "/assets/themes/gruvu.webp",
+  "name": "Gruvu"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-harbor-theme",
+  "image": "/assets/themes/harbor.webp",
+  "name": "Harbor"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-harbordark-theme",
+  "image": "/assets/themes/harbor-dark.webp",
+  "name": "Harbor Dark"
+ },
+ {
+  "repo": "https://github.com/archer-clawbot/codeOS-hermarchy-theme",
+  "image": "/assets/themes/hermarchy.webp",
+  "name": "Hermarchy"
+ },
+ {
+  "repo": "https://github.com/OldJobobo/codeOS-hinterlands-theme",
+  "image": "/assets/themes/hinterlands.webp",
+  "name": "Hinterlands"
+ },
+ {
+  "repo": "https://github.com/RiO7MAKK3R/codeOS-infernium-dark-theme",
+  "image": "/assets/themes/infernium.webp",
+  "name": "Infernium"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-inkypinky-theme",
+  "image": "/assets/themes/inky-pinky.webp",
+  "name": "Inky Pinky"
+ },
+ {
+  "repo": "https://github.com/devgtv/codeOS-japan-night-theme",
+  "image": "/assets/themes/japan-night.webp",
+  "name": "Japan Night"
+ },
+ {
+  "repo": "https://github.com/thisisgm/codeOS-lamplight-theme",
+  "image": "/assets/themes/lamplight.webp",
+  "name": "Lamplight"
+ },
+ {
+  "repo": "https://github.com/phuclh/codeOS-lawson-night-theme",
+  "image": "/assets/themes/lawson-night.webp",
+  "name": "Lawson Night"
+ },
+ {
+  "repo": "https://github.com/ItsABigIgloo/codeOS-mapquest-theme",
+  "image": "/assets/themes/map-quest.webp",
+  "name": "Map Quest"
+ },
+ {
+  "repo": "https://github.com/steve-lohmeyer/codeOS-mars-theme",
+  "image": "/assets/themes/mars.webp",
+  "name": "Mars"
+ },
+ {
+  "repo": "https://github.com/BVisagie/codeOS-matrix-theme",
+  "image": "/assets/themes/matrix.webp",
+  "name": "Matrix"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-mechanoonna-theme",
+  "image": "/assets/themes/mechanoonna.webp",
+  "name": "Mechanoonna"
+ },
+ {
+  "repo": "https://github.com/JaxonWright/codeOS-midnight-theme",
+  "image": "/assets/themes/midnight.webp",
+  "name": "Midnight"
+ },
+ {
+  "repo": "https://github.com/hipsterusername/codeOS-milkmatcha-light-theme",
+  "image": "/assets/themes/milky-matcha.webp",
+  "name": "Milky Matcha"
+ },
+ {
+  "repo": "https://github.com/davydotcom/codeOS-mini-jcw-theme",
+  "image": "/assets/themes/mini-jcw.webp",
+  "name": "Mini Jcw"
+ },
+ {
+  "repo": "https://github.com/Swarnim114/codeOS-monochrome-theme",
+  "image": "/assets/themes/monochrome.webp",
+  "name": "Monochrome"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-monokai-theme",
+  "image": "/assets/themes/monokai.webp",
+  "name": "Monokai"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-moodpeak-theme",
+  "image": "/assets/themes/moodpeak.webp",
+  "name": "Moodpeak"
+ },
+ {
+  "repo": "https://github.com/somerocketeer/codeOS-nagai-poolside-theme",
+  "image": "/assets/themes/nagai-poolside.webp",
+  "name": "Nagai Poolside"
+ },
+ {
+  "repo": "https://github.com/brianblakely/codeOS-naysayer-theme",
+  "image": "/assets/themes/naysayer.webp",
+  "name": "Naysayer"
+ },
+ {
+  "repo": "https://github.com/monoooki/codeOS-neo-sploosh-theme",
+  "image": "/assets/themes/neo-sploosh.webp",
+  "name": "Neo Sploosh"
+ },
+ {
+  "repo": "https://github.com/daniel-felipe/codeOS-neon-dusk-theme",
+  "image": "/assets/themes/neon-dusk.webp",
+  "name": "Neon Dusk"
+ },
+ {
+  "repo": "https://github.com/RiO7MAKK3R/codeOS-neovoid-theme",
+  "image": "/assets/themes/neovoid.webp",
+  "name": "Neovoid"
+ },
+ {
+  "repo": "https://github.com/davydotcom/codeOS-neptune-blue-theme",
+  "image": "/assets/themes/neptune-blue.webp",
+  "name": "Neptune Blue"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-nes-theme",
+  "image": "/assets/themes/nes.webp",
+  "name": "NES"
+ },
+ {
+  "repo": "https://github.com/tahadx/codeOS-noir-theme",
+  "image": "/assets/themes/noir.webp",
+  "name": "Noir"
+ },
+ {
+  "repo": "https://github.com/EF-Code/codeOS-oligarchy-theme",
+  "image": "/assets/themes/oligarchy.webp",
+  "name": "Oligarchy"
+ },
+ {
+  "repo": "https://github.com/HalmyLyseas/codeOS-nujabes-theme",
+  "image": "/assets/themes/nujabes.webp",
+  "name": "Nujabes"
+ },
+ {
+  "repo": "https://github.com/RiO7MAKK3R/codeOS-omacarchy-theme",
+  "image": "/assets/themes/omacarchy.webp",
+  "name": "Omacarchy"
+ },
+ {
+  "repo": "https://github.com/brianblakely/codeOS-omaled-theme",
+  "image": "/assets/themes/omaled.webp",
+  "name": "OmaLED"
+ },
+ {
+  "repo": "https://github.com/joaopinto15/codeOS-one-dark-theme",
+  "image": "/assets/themes/one-dark.webp",
+  "name": "One Dark"
+ },
+ {
+  "repo": "https://github.com/sc0ttman/codeOS-one-dark-pro-theme",
+  "image": "/assets/themes/one-dark-pro.webp",
+  "name": "One Dark Pro"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-oxocarbon-theme",
+  "image": "/assets/themes/oxo-carbon.webp",
+  "name": "Oxo Carbon"
+ },
+ {
+  "repo": "https://github.com/c0ze/codeOS-pagan-theme",
+  "image": "/assets/themes/pagan.webp",
+  "name": "Pagan"
+ },
+ {
+  "repo": "https://github.com/imbypass/codeOS-pandora-theme",
+  "image": "/assets/themes/pandora.webp",
+  "name": "Pandora"
+ },
+ {
+  "repo": "https://github.com/r-bart/codeOS-periphery-theme",
+  "image": "/assets/themes/periphery.webp",
+  "name": "Periphery"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-pina-theme",
+  "image": "/assets/themes/pina.webp",
+  "name": "Pina"
+ },
+ {
+  "repo": "https://github.com/ITSZXY/pink-blood-codeOS-theme",
+  "image": "/assets/themes/pink-blood.webp",
+  "name": "Pink Blood"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-pulsar-theme",
+  "image": "/assets/themes/pulsar.webp",
+  "name": "Pulsar"
+ },
+ {
+  "repo": "https://github.com/Grey-007/purple-moon",
+  "image": "/assets/themes/purple-moon.webp",
+  "name": "Purple Moon"
+ },
+ {
+  "repo": "https://github.com/dotsilva/codeOS-purplewave-theme",
+  "image": "/assets/themes/purplewave.webp",
+  "name": "Purplewave"
+ },
+ {
+  "repo": "https://github.com/r-bart/codeOS-quattrocento-light-theme",
+  "image": "/assets/themes/quattrocento-light.webp",
+  "name": "Quattrocento Light"
+ },
+ {
+  "repo": "https://github.com/atif-1402/codeOS-rainynight-theme",
+  "image": "/assets/themes/rainy-night.webp",
+  "name": "Rainy Night"
+ },
+ {
+  "repo": "https://github.com/kamatealif/codeOS-red-monarch-theme",
+  "image": "/assets/themes/red-monarch.webp",
+  "name": "Red Monarch"
+ },
+ {
+  "repo": "https://github.com/ferlemes/codeOS-red-pill-theme",
+  "image": "/assets/themes/red-pill.webp",
+  "name": "Red Pill"
+ },
+ {
+  "repo": "https://github.com/rondilley/codeOS-retropc-theme",
+  "image": "/assets/themes/retropc.webp",
+  "name": "RetroPC"
+ },
+ {
+  "repo": "https://github.com/brokkoli71/codeOS-ristretto-light-theme",
+  "image": "/assets/themes/ristretto-light.webp",
+  "name": "Ristretto Light"
+ },
+ {
+  "repo": "https://github.com/robzolkos/codeOS-robzee84-theme",
+  "image": "/assets/themes/robzee84.webp",
+  "name": "RobZee84"
+ },
+ {
+  "repo": "https://github.com/guilhermetk/codeOS-rose-pine-dark",
+  "image": "/assets/themes/rose-pine-dark.webp",
+  "name": "Rose Pine Dark"
+ },
+ {
+  "repo": "https://github.com/Memnoc/codeOS-rose-pine-moon-theme",
+  "image": "/assets/themes/rose-pine-moon.webp",
+  "name": "Rose Pine Moon"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-roseofdune-theme",
+  "image": "/assets/themes/rose-of-dune.webp",
+  "name": "Rose of Dune"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-ryu-theme",
+  "image": "/assets/themes/ryu.webp",
+  "name": "Ryu"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-sakura-theme",
+  "image": "/assets/themes/sakura.webp",
+  "name": "Sakura"
+ },
+ {
+  "repo": "https://github.com/OldJobobo/codeOS-sakura-mochi-theme",
+  "image": "/assets/themes/sakura-mochi.webp",
+  "name": "Sakura Mochi"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-saga-theme",
+  "image": "/assets/themes/saga.webp",
+  "name": "Saga"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-sapphire-theme",
+  "image": "/assets/themes/sapphire.webp",
+  "name": "Sapphire"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-shadesofjade-theme",
+  "image": "/assets/themes/shades-of-jade.webp",
+  "name": "Shades of Jade"
+ },
+ {
+  "repo": "https://github.com/TyRichards/codeOS-space-monkey-theme/",
+  "image": "/assets/themes/space-monkey.webp",
+  "name": "Space Monkey"
+ },
+ {
+  "repo": "https://github.com/bjarneo/codeOS-snow-theme",
+  "image": "/assets/themes/snow.webp",
+  "name": "Snow"
+ },
+ {
+  "repo": "https://github.com/ankur311sudo/snow_black",
+  "image": "/assets/themes/snow-black.webp",
+  "name": "Snow Black"
+ },
+ {
+  "repo": "https://github.com/Gazler/codeOS-solarized-theme",
+  "image": "/assets/themes/solarized.webp",
+  "name": "Solarized"
+ },
+ {
+  "repo": "https://github.com/dfrico/codeOS-solarized-light-theme",
+  "image": "/assets/themes/solarized-light.webp",
+  "name": "Solarized Light"
+ },
+ {
+  "repo": "https://github.com/motorsss/codeOS-solarizedosaka-theme",
+  "image": "/assets/themes/solarized-osaka.webp",
+  "name": "Solarized Osaka"
+ },
+ {
+  "repo": "https://github.com/juangalt/codeOS-starry-night-theme",
+  "image": "/assets/themes/starry-night.webp",
+  "name": "Starry Night"
+ },
+ {
+  "repo": "https://github.com/r-bart/codeOS-starsend-theme",
+  "image": "/assets/themes/starsend.webp",
+  "name": "Starsend"
+ },
+ {
+  "repo": "https://github.com/rondilley/codeOS-sunset-theme",
+  "image": "/assets/themes/sunset.webp",
+  "name": "Sunset"
+ },
+ {
+  "repo": "https://github.com/tahayvr/codeOS-sunset-drive-theme",
+  "image": "/assets/themes/sunset-drive.webp",
+  "name": "Sunset Drive"
+ },
+ {
+  "repo": "https://github.com/TyRichards/codeOS-super-game-bro-theme",
+  "image": "/assets/themes/super-game-bro.webp",
+  "name": "Super Game Bro"
+ },
+ {
+  "repo": "https://github.com/omacom-io/codeOS-synthwave84-theme/",
+  "image": "/assets/themes/synthwave-84.webp",
+  "name": "Synthwave '84"
+ },
+ {
+  "repo": "https://github.com/Ahmad-Mtr/codeOS-temerald-theme",
+  "image": "/assets/themes/temerald.webp",
+  "name": "Temerald"
+ },
+ {
+  "repo": "https://github.com/r-bart/codeOS-terminus-theme",
+  "image": "/assets/themes/terminus.webp",
+  "name": "Terminus"
+ },
+ {
+  "repo": "https://github.com/Justin-De-Sio/codeOS-tokyoled-theme",
+  "image": "/assets/themes/tokyo-night-oled.webp",
+  "name": "Tokyo Night OLED"
+ },
+ {
+  "repo": "https://github.com/leonardobetti/codeOS-tycho",
+  "image": "/assets/themes/tycho.webp",
+  "name": "Tycho"
+ },
+ {
+  "repo": "https://github.com/OldJobobo/codeOS-waffle-cat-theme",
+  "image": "/assets/themes/waffle-cat.webp",
+  "name": "Waffle Cat"
+ },
+ {
+  "repo": "https://github.com/hipsterusername/codeOS-waveform-dark-theme",
+  "image": "/assets/themes/waveform-dark.webp",
+  "name": "Waveform Dark"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-whitegold-theme",
+  "image": "/assets/themes/white-gold.webp",
+  "name": "White Gold"
+ },
+ {
+  "repo": "https://github.com/oldjobobo/codeOS-windows-dark-mode-theme",
+  "image": "/assets/themes/windows-dark-mode.webp",
+  "name": "Windows Dark Mode"
+ },
+ {
+  "repo": "https://github.com/chipkoziara/codeOS-winslow-theme",
+  "image": "/assets/themes/winslow.webp",
+  "name": "Winslow"
+ },
+ {
+  "repo": "https://github.com/Nirmal314/codeOS-van-gogh-theme",
+  "image": "/assets/themes/van-gogh.webp",
+  "name": "Van Gogh"
+ },
+ {
+  "repo": "https://github.com/r-bart/codeOS-vault-theme",
+  "image": "/assets/themes/vault.webp",
+  "name": "Vault"
+ },
+ {
+  "repo": "https://github.com/HANCORE-linux/codeOS-velvetnight-theme",
+  "image": "/assets/themes/velvet-night.webp",
+  "name": "Velvet Night"
+ },
+ {
+  "repo": "https://github.com/mattbbia/venice-from-above-codeOS",
+  "image": "/assets/themes/venice-from-above.webp",
+  "name": "Venice from Above"
+ },
+ {
+  "repo": "https://github.com/thmoee/codeOS-vesper-theme",
+  "image": "/assets/themes/vesper.webp",
+  "name": "Vesper"
+ },
+ {
+  "repo": "https://github.com/tahayvr/codeOS-vhs80-theme",
+  "image": "/assets/themes/vhs-80.webp",
+  "name": "VHS 80"
+ },
+ {
+  "repo": "https://github.com/vyrx-dev/codeOS-void-theme",
+  "image": "/assets/themes/void.webp",
+  "name": "Void"
+ },
+ {
+  "repo": "https://github.com/kyerpotts/codeOS-vulkanite-theme",
+  "image": "/assets/themes/vulkanite.webp",
+  "name": "Vulkanite"
+ }
+]
