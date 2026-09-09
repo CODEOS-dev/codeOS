@@ -1,0 +1,59 @@
+name: 请求构建定制 ISO / Request Custom ISO
+description: 通过 Issue 触发 codeOS ISO 自动化构建 / Trigger automated ISO build via Issue
+title: "[ISO] "
+labels: ["iso-build", "custom-build"]
+assignees: ["cangcang"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 定制 codeOS ISO / Custom codeOS ISO Build
+
+        填写以下信息后提交 Issue，GitHub Actions 会自动开始构建并在 Issue 中回复下载链接。
+
+        Fill in the info below and submit. GitHub Actions will build automatically and post the download link here.
+
+        ---
+
+  - type: dropdown
+    id: build_type
+    attributes:
+      label: 构建类型 / Build Type
+      description: 常规版包含默认本土化配置；定制版会额外安装你指定的包 / Standard build includes default localization; custom build installs your extra packages.
+      options:
+        - label: 常规版 Standard (基础本土化 + 默认应用)
+          default: true
+        - label: 定制版 Custom (添加额外包)
+
+  - type: textarea
+    id: extra_packages
+    attributes:
+      label: 额外包列表 / Extra Packages
+      description: 每行一个包名，可以是官方包或 AUR 包（AUR 用 `aur:包名` 格式）。留空则等同于常规版。 / One package per line. Use `aur:package` for AUR. Leave empty for standard build.
+      placeholder: |
+        # 每行一个包，# 开头为注释
+        # One package per line, # for comments
+        discord
+        obsidian
+        aur:google-chrome
+        aur:visual-studio-code-bin
+  - validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 备注 / Notes
+      description: 其他需要说明的内容（可选） / Anything else (optional).
+      placeholder: 例如需要特定内核、DE 等 / e.g. need specific kernel, DE, etc.
+  - validations:
+      required: false
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认 / Confirm
+      options:
+        - label: 我已确认填写正确 / I've confirmed the info above is correct
+          required: true

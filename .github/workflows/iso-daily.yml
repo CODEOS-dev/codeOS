@@ -1,0 +1,143 @@
+name: 每日常规 ISO 构建 / Daily Standard ISO Build
+
+# 每天 03:00 UTC (11:00 北京时间) 自动构建完整 codeOS 常规版 ISO
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: iso-daily
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: 构建常规 ISO / Build Standard ISO
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      iso_name: ${{ steps.output.outputs.iso_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: 准备基础包 + codeOS 完整内容 / Prepare base + copy codeOS
+        run: |
+          mkdir -p build/workdir/{packages,airootfs,efiboot/loader,grub,i686-pc,any,out}
+
+          # 1. 基础包列表
+          cat install/omarchy-base.packages install/omarchy-other.packages \
+            | sed '/^#/d' | sed '/^$/d' | sort -u > build/workdir/packages/base.txt
+
+          echo "📦 基础包: $(wc -l < build/workdir/packages/base.txt) 个"
+
+          # 2. codeOS 仓库完整内容
+          mkdir -p build/workdir/airootfs/usr/share/omarchy
+          for d in bin shell themes default config install etc plans default/agents skills; do
+            [ -d "$d" ] && cp -r "$d" build/workdir/airootfs/usr/share/omarchy/
+          done
+          for f in version logo.svg README.md; do
+            [ -f "$f" ] && cp "$f" build/workdir/airootfs/usr/share/omarchy/ 2>/dev/null || true
+          done
+
+          # 3. /usr/local/bin 链接
+          mkdir -p build/workdir/airootfs/usr/local/bin
+          for cmd in bin/*; do
+            ln -sf "/usr/share/omarchy/bin/$(basename "$cmd")" \
+              "build/workdir/airootfs/usr/local/bin/$(basename "$cmd")"
+          done
+          ln -sf "/usr/share/omarchy/bin/omarchy" "build/workdir/airootfs/usr/local/bin/develop"
+
+          # 4. 环境变量
+          mkdir -p build/workdir/airootfs/etc/profile.d
+          cat > build/workdir/airootfs/etc/profile.d/codeos.sh << 'EOF'
+export OMARCHY_PATH=/usr/share/omarchy
+export PATH="$OMARCHY_PATH/bin:$PATH"
+EOF
+          chmod +x build/workdir/airootfs/etc/profile.d/codeos.sh
+
+          # 5. 镜像源 + locale
+          mkdir -p build/workdir/airootfs/etc/pacman.d
+          cat default/pacman/mirrorlist-stable default/pacman/mirrorlist-rc default/pacman/mirrorlist-edge \
+            | sed '/^#/d' | sed '/^$/d' > build/workdir/airootfs/etc/pacman.d/mirrorlist
+
+          cat > build/workdir/airootfs/etc/locale.conf << 'EOF'
+LANG=zh_CN.UTF-8
+LANGUAGE=zh_CN:zh:en_US:en
+EOF
+
+          # 6. bashrc 追加
+          cat >> build/workdir/airootfs/root/.bashrc << 'EOF'
+
+# codeOS
+export OMARCHY_PATH=/usr/share/omarchy
+export PATH="$OMARCHY_PATH/bin:$PATH"
+alias develop=omarchy
+EOF
+
+          CODEOS_SIZE=$(du -sh build/workdir/airootfs/usr/share/omarchy | cut -f1)
+          echo "✅ codeOS airootfs ready ($CODEOS_SIZE)"
+
+          cp -rn build/profile/* build/workdir/ 2>/dev/null || true
+
+      - name: Docker 构建 / Build ISO in Docker
+        run: |
+          TS=$(date +%Y%m%d)
+          ISO_NAME="codeOS-standard-daily-${TS}.iso"
+          echo "iso_name=$ISO_NAME" >> "$GITHUB_ENV"
+
+          docker run --rm --privileged \
+            -v "$PWD/build/workdir:/workdir" \
+            -v "$PWD/out:/out" \
+            archlinux:latest \
+            bash -c '
+              set -e
+              pacman-key --init && pacman-key --populate archlinux
+              pacman -Syu --noconfirm
+              pacman -S --noconfirm archiso mkarchiso
+
+              cd /workdir
+              cat > profiledef.sh << "PROFILE_EOF"
+#!/bin/bash
+iso_name="codeOS"
+iso_label="codeOS '"$(date +%Y%m)
+iso_publisher="codeOS <https://github.com/CODEOS-dev/codeOS>"
+iso_application="codeOS Live ISO"
+iso_version="'"$(date +%Y.%m.%d)
+install_dir="arch"
+PROFILE_EOF
+              chmod +x profiledef.sh
+
+              mkarchiso -v -w /tmp/iso-work -o /out \
+                -C /workdir/packages/base.txt \
+                -L "codeOS Standard Daily" \
+                -A x86_64
+
+              mv /out/codeOS-*.iso "/out/'$ISO_NAME'" 2>/dev/null || true
+              ls -lh /out/
+            ' 2>&1 | tail -50
+
+      - name: 输出 / Output
+        id: output
+        run: |
+          ISO=$(ls out/*.iso 2>/dev/null | head -1)
+          if [ -n "$ISO" ]; then
+            NAME=$(basename "$ISO")
+            SIZE=$(du -h "$ISO" | cut -f1)
+            echo "✅ $NAME ($SIZE)"
+            echo "iso_name=$NAME" >> "$GITHUB_OUTPUT"
+          else
+            echo "❌ No ISO"
+            exit 1
+          fi
+
+      - name: 上传产物 / Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ISO_NAME }}
+          path: out/*.iso
+          retention-days: 14
