@@ -51,55 +51,14 @@ jobs:
       - id: parse
         run: |
           ISSUE_NUMBER="${{ needs.check-label.outputs.issue_number }}"
-          BODY=$(gh api repos/${{ github.repository }}/issues/${ISSUE_NUMBER} --jq '.body' 2>/dev/null)
-
-          # 提取额外包：直接抓 ``` markdown code block 里的非注释行
-          # GitHub Issue 模板渲染后 section 标题格式不稳定，所以用这种方式最鲁棒
-          EXTRA=$(echo "$BODY" \
-            | sed -n '/```/,/```/p' \
-            | grep -v '^```' \
-            | sed '/^[[:space:]]*#/d' \
-            | sed '/^[[:space:]]*$/d' \
-            | sed 's/^[[:space:]]*- //')
-
-          # 安全正则校验：允许字母数字下划线连字符点号 + aur: 前缀
-          VALID=""
-          INVALID=""
-          while IFS= read -r pkg; do
-            [ -z "$pkg" ] && continue
-            pkg=$(echo "$pkg" | xargs)
-            if echo "$pkg" | grep -qE '^(aur:)?[a-zA-Z0-9][a-zA-Z0-9._+-]*$'; then
-              VALID="$VALID $pkg"
-            else
-              INVALID="$INVALID $pkg"
-            fi
-          done <<< "$EXTRA"
-
-          # 有额外包 = custom，没额外包 = standard
-          if [ -n "$VALID" ]; then
-            BUILD_TYPE="custom"
-          else
-            BUILD_TYPE="standard"
-          fi
+          RESULT=$(bash scripts/parse_issue.sh "$ISSUE_NUMBER")
+          echo "$RESULT"
+          BUILD_TYPE=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['build_type'])")
+          VALID_JSON=$(echo "$RESULT" | python3 -c "import sys,json; print(json.dumps(json.load(sys.stdin)['extra_packages']))")
+          VALIDATION_OK=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['validation_ok'])")
           echo "build_type=$BUILD_TYPE" >> "$GITHUB_OUTPUT"
-
-          # 构建 JSON array
-          VALID_JSON="["
-          FIRST=true
-          for pkg in $VALID; do
-            if $FIRST; then FIRST=false; else VALID_JSON+=","; fi
-            VALID_JSON+="\"$pkg\""
-          done
-          VALID_JSON+="]"
           echo "extra_packages_json=$VALID_JSON" >> "$GITHUB_OUTPUT"
-
-          if [ -n "$INVALID" ]; then
-            echo "validation_ok=false" >> "$GITHUB_OUTPUT"
-            echo "❌ Invalid packages: $INVALID"
-          else
-            echo "validation_ok=true" >> "$GITHUB_OUTPUT"
-            echo "✅ Build type: $BUILD_TYPE, Valid packages: $VALID"
-          fi
+          echo "validation_ok=$VALIDATION_OK" >> "$GITHUB_OUTPUT"
 
       - if: steps.parse.outputs.validation_ok == 'true'
         run: |

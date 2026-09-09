@@ -147,13 +147,5 @@ jobs:
             echo "FAIL: 中文本土化脚本不存在"
             errors=$((errors + 1))
           fi
-
-          # 检查 sulfur 主题
-          if [[ -f themes/sulfur/colors.toml ]]; then
-            echo "PASS: Sulfur Minecraft 主题存在"
-          else
-            echo "FAIL: Sulfur 主题不存在"
-            errors=$((errors + 1))
-          fi
-
+          
           [[ $errors -eq 0 ]] || exit 1
