@@ -287,71 +287,60 @@ jobs:
   post-failure:
     name: 报告失败 / Report Failure
     runs-on: ubuntu-latest
-    needs: [build-iso]
-    if: always() && needs.build-iso.result == 'failure'
+    # 不依赖任何 job，直接基于 run 状态动态判断
+    if: always()
     steps:
-      - name: 抓取错误注解 / Fetch failure annotations
-        id: fetch
+      - name: 判断哪一步挂了 + 生成反馈 / Detect failure stage
         run: |
-          ISSUE="${{ needs.check-label.outputs.issue_number }}"
-          RUN_ID="${{ github.run_id }}"
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN_ID}"
           REPO="${{ github.repository }}"
-          ORIG_ISSUE_URL="${{ github.server_url }}/${{ github.repository }}/issues/$ISSUE"
+          RUN_ID="${{ github.run_id }}"
+          RUN_URL="${{ github.server_url }}/$REPO/actions/runs/$RUN_ID"
+          ISSUE="${{ github.event.issue.number }}"
 
-          ANNOTATIONS=$(gh api repos/$REPO/actions/runs/$RUN_ID/jobs \
-            --jq '.jobs[].steps[] | select(.conclusion=="failure") | .name as $name | {step: $name, annotations: .annotations[]?} | select(.annotations != null) | "\(.step): \(.annotations.message // "") \(.annotations.rawDetails // "")"' 2>/dev/null \
-            | head -20)
-          [ -z "$ANNOTATIONS" ] && ANNOTATIONS="(no annotations)"
+          # 拉所有 job 状态
+          STATUSES=$(gh api repos/$REPO/actions/runs/$RUN_ID/jobs \
+            --jq '[.jobs[] | "\(.name)=\(.conclusion)"] | join("\n")' 2>/dev/null)
+          echo "$STATUSES"
+
+          FAILED_STAGE="(unknown)"
+          FAILED_JOBS=""
+
+          # 按优先级判断哪个 job 挂了
+          echo "$STATUSES" | grep -q '解析请求.*failure' && FAILED_STAGE="parse-and-confirm"
+          echo "$STATUSES" | grep -q '构建 ISO.*failure' && FAILED_STAGE="build-iso"
+          echo "$STATUSES" | grep -q '检查标签.*failure' && FAILED_STAGE="check-label"
 
           FAILED_JOBS=$(gh api repos/$REPO/actions/runs/$RUN_ID/jobs \
             --jq '[.jobs[] | select(.conclusion=="failure") | .name] | join(", ")' 2>/dev/null)
+          [ -z "$FAILED_JOBS" ] && FAILED_JOBS="(无 / none)"
 
-          PACKAGES="${{ needs.parse-and-confirm.outputs.extra_packages_json }}"
-          BUILD_TYPE="${{ needs.parse-and-confirm.outputs.build_type }}"
+          # 收集失败 step 的 annotations
+          ANNOTATIONS=$(gh api repos/$REPO/actions/runs/$RUN_ID/jobs \
+            --jq '[.jobs[].steps[] | select(.conclusion=="failure") | "\(.name): \(.annotations[].message // "")"] | join("\n")' 2>/dev/null \
+            | head -30)
+          [ -z "$ANNOTATIONS" ] && ANNOTATIONS="(无注解，查看完整日志 / no annotations, see full run log)"
 
-          # 生成预填 bug report URL
+          # 构建预填 bug report
           {
             echo "### Run URL"
             echo "$RUN_URL"
             echo ""
-            echo "### Build Type"
-            echo "$BUILD_TYPE"
-            echo ""
-            echo "### Extra Packages"
-            echo '```json'
-            echo "$PACKAGES"
-            echo '```'
+            echo "### Failed Stage"
+            echo "$FAILED_STAGE"
             echo ""
             echo "### Error Log"
             echo '```'
             echo "$ANNOTATIONS"
             echo '```'
-            echo ""
-            echo "### Related"
-            echo "Original: $ORIG_ISSUE_URL"
-          } > /tmp/bug_body_raw.txt
+          } > /tmp/bug_body.txt
 
-          python3 -c "import sys,urllib.parse as u; b=open('/tmp/bug_body_raw.txt').read(); t=u.quote('ISO Build Failure - #${ISSUE}'); print('${{ github.server }}/${{ github.repository }}/issues/new?title='+t+'&body='+u.quote(b)+'&labels=bug,build-failure&template=build-bug.yml')" > /tmp/bug_url.txt
+          python3 -c "import urllib.parse as u; b=open('/tmp/bug_body.txt').read(); print('${{ github.server }}/${REPO}/issues/new?title='+u.quote('Build Failure - #${ISSUE} ('+ '$FAILED_STAGE' + ')')+'&body='+u.quote(b)+'&labels=bug,build-failure'+'&template=build-bug.yml')" > /tmp/bug_url.txt
           BUG_URL=$(cat /tmp/bug_url.txt)
 
-          echo "annotations<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$ANNOTATIONS" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-          echo "run_url=$RUN_URL" >> "$GITHUB_OUTPUT"
-          echo "bug_url=$BUG_URL" >> "$GITHUB_OUTPUT"
-          echo "failed_jobs=$FAILED_JOBS" >> "$GITHUB_OUTPUT"
-
-      - name: 评论到 Issue / Comment on Issue
-        run: |
-          ISSUE="${{ needs.check-label.outputs.issue_number }}"
-          FAILED_JOBS="${{ steps.fetch.outputs.failed_jobs }}"
-          RUN_URL="${{ steps.fetch.outputs.run_url }}"
-          ANNOTATIONS="${{ steps.fetch.outputs.annotations }}"
-          BUG_URL="${{ steps.fetch.outputs.bug_url }}"
           {
             echo "### ❌ 构建发生意外导致失败 / Build failed unexpectedly"
             echo ""
+            echo "**失败阶段 / Failed stage**: $FAILED_STAGE"
             echo "**失败 Jobs / Failed jobs**: $FAILED_JOBS"
             echo ""
             echo "**Actions Run**: [$RUN_URL]($RUN_URL)"
@@ -371,7 +360,14 @@ jobs:
             echo ""
             echo "[**📋 自动提交反馈 / Auto-fill Bug Report**]($BUG_URL)"
           } > /tmp/issue_comment.md
-          gh issue comment "$ISSUE" --body-file /tmp/issue_comment.md --repo "${{ github.repository }}"
-          gh issue edit "$ISSUE" --remove-label iso-build --repo "${{ github.repository }}"
+
+          # 只有真正有 failure 才评论和打标签
+          if echo "$STATUSES" | grep -q 'failure'; then
+            echo "检测到失败，发评论..."
+            gh issue comment "$ISSUE" --body-file /tmp/issue_comment.md --repo "$REPO"
+            gh issue edit "$ISSUE" --remove-label iso-build --repo "$REPO"
+          else
+            echo "没有 failure job，跳过（可能全部 success 或 skip）"
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
