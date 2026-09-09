@@ -1,0 +1,59 @@
+{
+  "lock": {
+    "placeholder": "请输入密码",
+    "checking": "验证中..."
+  },
+  "polkit": {
+    "need_auth": "需要身份验证...",
+    "wrong": "错误",
+    "checking": "验证中...",
+    "enter_password": "输入密码"
+  },
+  "menu": {
+    "no_matches": "未找到 \u201c%1\u201d 的匹配项",
+    "empty": "暂无内容",
+    "uninstall_title": "是否卸载 %1？",
+    "uninstall_button": "卸载"
+  },
+  "tray": {
+    "title": "系统托盘图标",
+    "hint": "固定图标始终可见，隐藏图标永不显示。",
+    "empty": "暂无托盘图标。"
+  },
+  "notifications": {
+    "no_recent": "暂无通知记录"
+  },
+  "emoji": {
+    "no_matches": "未找到 \u201c%1\u201d 的匹配项"
+  },
+  "clipboard": {
+    "image": "图片",
+    "screenshot": "截图",
+    "files": "%1 个文件"
+  },
+  "search": {
+    "placeholder": "搜索...",
+    "no_matches": "未找到匹配项",
+    "no_options": "无选项",
+    "none_selected": "未选择"
+  },
+  "clock": {
+    "born": "出生",
+    "live_to": "预期寿命",
+    "year": "岁"
+  },
+  "weather": {
+    "feels": "体感",
+    "wind": "风速",
+    "humid": "湿度",
+    "fetching": "正在获取天气预报..."
+  },
+  "agents": {
+    "no_subscriptions": "未检测到 AI 编码订阅。\n使用过 Agent 后会在此显示。",
+    "balance": "余额",
+    "prepaid_credits": "预付费额度",
+    "limits": "限额",
+    "tokens_by_day": "每日 Token",
+    "tokens_by_model": "按模型统计 Token"
+  }
+}

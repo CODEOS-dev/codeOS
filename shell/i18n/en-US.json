@@ -1,0 +1,59 @@
+{
+  "lock": {
+    "placeholder": "Enter Password",
+    "checking": "Checking..."
+  },
+  "polkit": {
+    "need_auth": "Authentication is needed...",
+    "wrong": "Wrong",
+    "checking": "Checking...",
+    "enter_password": "Enter password"
+  },
+  "menu": {
+    "no_matches": "No matches for \u201c%1\u201d",
+    "empty": "Nothing here yet",
+    "uninstall_title": "Do you want to uninstall %1?",
+    "uninstall_button": "Uninstall"
+  },
+  "tray": {
+    "title": "Tray icons",
+    "hint": "Pinned icons stay visible. Hidden icons never show.",
+    "empty": "No tray items reporting."
+  },
+  "notifications": {
+    "no_recent": "No recent notifications"
+  },
+  "emoji": {
+    "no_matches": "No matches for \u201c%1\u201d"
+  },
+  "clipboard": {
+    "image": "Image",
+    "screenshot": "Screenshot",
+    "files": "%1 files"
+  },
+  "search": {
+    "placeholder": "Search...",
+    "no_matches": "No matches",
+    "no_options": "No options",
+    "none_selected": "None selected"
+  },
+  "clock": {
+    "born": "BORN",
+    "live_to": "LIVE TO",
+    "year": "year"
+  },
+  "weather": {
+    "feels": "FEELS",
+    "wind": "WIND",
+    "humid": "HUMID",
+    "fetching": "Fetching forecast..."
+  },
+  "agents": {
+    "no_subscriptions": "No AI coding subscriptions found.\nAgents show up here once you've used them.",
+    "balance": "BALANCE",
+    "prepaid_credits": "Prepaid credits",
+    "limits": "LIMITS",
+    "tokens_by_day": "TOKENS BY DAY",
+    "tokens_by_model": "TOKENS BY MODEL"
+  }
+}

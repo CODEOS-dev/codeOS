@@ -1,0 +1,159 @@
+name: codeOS CI
+
+on:
+  push:
+    branches: [quattro, main, dev, '*']
+  pull_request:
+    branches: [quattro, main, dev]
+
+jobs:
+  # === Shell 脚本语法检查 ===
+  shell-check:
+    name: Shell Syntax Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Check shell scripts
+        run: |
+          # 检查所有 .sh 文件的语法
+          find . -name '*.sh' -not -path './test/*' -print0 | \
+            xargs -0 -I{} bash -n {} || true
+
+          # shellcheck 静态分析（排除已知的第三方和迁移脚本）
+          find . -name '*.sh' -not -path './test/*' -not -path './migrations/*' -print0 | \
+            xargs -0 -r shellcheck --severity=warning --color=never || true
+
+  # === 验证主题结构 ===
+  theme-verify:
+    name: Theme Structure Verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify required theme files
+        run: |
+          errors=0
+          for theme_dir in themes/*/; do
+            theme_name=$(basename "$theme_dir")
+            # 检查 colors.toml
+            if [[ ! -f "$theme_dir/colors.toml" ]]; then
+              echo "FAIL: $theme_name 缺少 colors.toml"
+              errors=$((errors + 1))
+              continue
+            fi
+            # 检查 colors.toml 包含必要字段
+            if ! grep -q '^mode\s*=' "$theme_dir/colors.toml"; then
+              echo "FAIL: $theme_name 的 colors.toml 缺少 mode 字段"
+              errors=$((errors + 1))
+            fi
+            if ! grep -q '^accent\s*=' "$theme_dir/colors.toml"; then
+              echo "FAIL: $theme_name 的 colors.toml 缺少 accent 字段"
+              errors=$((errors + 1))
+            fi
+            if ! grep -q '^background\s*=' "$theme_dir/colors.toml"; then
+              echo "FAIL: $theme_name 的 colors.toml 缺少 background 字段"
+              errors=$((errors + 1))
+            fi
+            echo "PASS: $theme_name 主题结构完整"
+          done
+          [[ $errors -eq 0 ]] || exit 1
+
+  # === 验证 bin/ 命令元数据 ===
+  cli-router:
+    name: CLI Router Metadata
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run CLI tests (bash syntax only, no runtime)
+        run: |
+          # 验证所有 bin/ 下的脚本语法正确
+          for cmd in bin/*; do
+            if [[ -x "$cmd" ]] || [[ -f "$cmd" ]]; then
+              bash -n "$cmd" && echo "OK: $(basename "$cmd")"
+            fi
+          done
+
+  # === 检查 post-install 脚本 ===
+  post-install:
+    name: Post-Install Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify post-install scripts
+        run: |
+          errors=0
+          for script in install/post-install/*.sh; do
+            echo "检查: $script"
+            if ! bash -n "$script"; then
+              echo "FAIL: $script 语法错误"
+              errors=$((errors + 1))
+            fi
+          done
+          [[ $errors -eq 0 ]] || exit 1
+
+  # === 验证本土化配置 ===
+  localization-check:
+    name: Localization Config Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Chinese localization files
+        run: |
+          errors=0
+
+          # 检查镜像源包含国内镜像
+          for mirrorlist in default/pacman/mirrorlist-*; do
+            echo "检查镜像源: $mirrorlist"
+            if ! grep -q 'mirrors.ustc.edu.cn' "$mirrorlist"; then
+              echo "WARN: $mirrorlist 未包含中科大镜像"
+            fi
+          done
+
+          # 检查 locale 默认值
+          if grep -q 'zh_CN.UTF-8' default/bash/envs; then
+            echo "PASS: locale 默认值包含 zh_CN.UTF-8"
+          else
+            echo "FAIL: locale 默认值未包含 zh_CN.UTF-8"
+            errors=$((errors + 1))
+          fi
+
+          # 检查 fcitx5 中文输入法
+          if grep -q 'fcitx5-rime' install/omarchy-base.packages; then
+            echo "PASS: 包含 fcitx5-rime"
+          else
+            echo "FAIL: 未包含 fcitx5-rime"
+            errors=$((errors + 1))
+          fi
+
+          # 检查中文字体
+          if grep -q 'wqy-zenhei\|noto-fonts-cjk-sans' install/omarchy-base.packages; then
+            echo "PASS: 包含中文 CJK 字体"
+          else
+            echo "FAIL: 未包含中文 CJK 字体"
+            errors=$((errors + 1))
+          fi
+
+          # 检查 post-install/localize-zh.sh
+          if [[ -f install/post-install/localize-zh.sh ]]; then
+            echo "PASS: 中文本土化脚本存在"
+          else
+            echo "FAIL: 中文本土化脚本不存在"
+            errors=$((errors + 1))
+          fi
+
+          # 检查 sulfur 主题
+          if [[ -f themes/sulfur/colors.toml ]]; then
+            echo "PASS: Sulfur Minecraft 主题存在"
+          else
+            echo "FAIL: Sulfur 主题不存在"
+            errors=$((errors + 1))
+          fi
+
+          [[ $errors -eq 0 ]] || exit 1

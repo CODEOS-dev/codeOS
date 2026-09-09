@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "omarchy.system-update",
+  "name": "codeOS update",
+  "version": "1.0.0",
+  "author": "codeOS",
+  "description": "Indicates available codeOS updates",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "SystemUpdate.qml"
+  },
+  "barWidget": {
+    "displayName": "codeOS update",
+    "description": "Indicates available codeOS updates",
+    "category": "System",
+    "allowMultiple": false
+  }
+}

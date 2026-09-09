@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "omarchy.menu",
+  "name": "codeOS menu",
+  "version": "1.0.0",
+  "author": "codeOS",
+  "description": "Quickshell-powered codeOS command menu",
+  "kinds": [
+    "menu",
+    "bar-widget"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "menu": "Menu.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "codeOS menu",
+    "description": "Launches the codeOS menu",
+    "category": "Compositor",
+    "allowMultiple": false
+  }
+}
