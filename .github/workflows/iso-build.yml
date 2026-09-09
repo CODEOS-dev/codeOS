@@ -52,12 +52,17 @@ jobs:
         run: |
           ISSUE_NUMBER="${{ needs.check-label.outputs.issue_number }}"
           BODY=$(gh api repos/${{ github.repository }}/issues/${ISSUE_NUMBER} --jq '.body' 2>/dev/null)
-          BUILD_TYPE=$(echo "$BODY" | grep -ioE '(Standard|Custom)' | head -1 | tr '[:upper:]' '[:lower:]')
-          [ -z "$BUILD_TYPE" ] && BUILD_TYPE="standard"
-          echo "build_type=$BUILD_TYPE" >> "$GITHUB_OUTPUT"
-          EXTRA=$(echo "$BODY" | sed -n '/额外包列表\|Extra Packages/,/备注\|Notes/p' \
-            | grep -v '^#' | grep -v '^##' | grep -v '|' | grep -v '^$' \
-            | sed 's/`//g' | sed 's/^[[:space:]]*- //' | sed '/每行\|one package\|one per line/Id')
+
+          # 提取额外包：直接抓 ``` markdown code block 里的非注释行
+          # GitHub Issue 模板渲染后 section 标题格式不稳定，所以用这种方式最鲁棒
+          EXTRA=$(echo "$BODY" \
+            | sed -n '/```/,/```/p' \
+            | grep -v '^```' \
+            | sed '/^[[:space:]]*#/d' \
+            | sed '/^[[:space:]]*$/d' \
+            | sed 's/^[[:space:]]*- //')
+
+          # 安全正则校验：允许字母数字下划线连字符点号 + aur: 前缀
           VALID=""
           INVALID=""
           while IFS= read -r pkg; do
@@ -69,6 +74,16 @@ jobs:
               INVALID="$INVALID $pkg"
             fi
           done <<< "$EXTRA"
+
+          # 有额外包 = custom，没额外包 = standard
+          if [ -n "$VALID" ]; then
+            BUILD_TYPE="custom"
+          else
+            BUILD_TYPE="standard"
+          fi
+          echo "build_type=$BUILD_TYPE" >> "$GITHUB_OUTPUT"
+
+          # 构建 JSON array
           VALID_JSON="["
           FIRST=true
           for pkg in $VALID; do
@@ -77,10 +92,13 @@ jobs:
           done
           VALID_JSON+="]"
           echo "extra_packages_json=$VALID_JSON" >> "$GITHUB_OUTPUT"
+
           if [ -n "$INVALID" ]; then
             echo "validation_ok=false" >> "$GITHUB_OUTPUT"
+            echo "❌ Invalid packages: $INVALID"
           else
             echo "validation_ok=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Build type: $BUILD_TYPE, Valid packages: $VALID"
           fi
 
       - if: steps.parse.outputs.validation_ok == 'true'
