@@ -1,8 +1,9 @@
 /**
  * The codeOS wordmark as what it actually is: a 81x19 bitmap. Generated
- * from the site's brand/codeOS-wordmark.svg, whose 211 rects all land exactly
- * on a 51x50 unit grid. The hero draws these cells on the same grid as the
- * background field, so logo and field can never fall out of alignment.
+ * from the site's brand/codeOS-wordmark.svg, whose 738 rects all land
+ * exactly on a 51x50 unit grid. The hero draws these cells on the same
+ * grid as the background field, so logo and field can never fall out of
+ * alignment.
  *
  * Regenerate with: npm run refresh-wordmark
  */
@@ -29,4 +30,4 @@ export const WORDMARK_ROWS = [
   '001111100000010001110001000011100010000111000111001111111000011100010000001111100',
   '000000000000000000000000000000000000000111000110000000000000000000000000000000000',
   '000000000000000000000000000000000000000111000100000000000000000000000000000000000',
-] as const
+]

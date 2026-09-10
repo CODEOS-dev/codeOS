@@ -2355,12 +2355,12 @@ h6 {
 }
 .brand__preview--wordmark {
   aspect-ratio: 4131 / 950;
-  --brand-mask: url('/brand/omarchy-wordmark.svg');
+  --brand-mask: url('/brand/codeOS-wordmark.svg');
 }
 .brand__preview--logo {
   aspect-ratio: 1;
   max-width: 20rem;
-  --brand-mask: url('/brand/omarchy-logo.svg');
+  --brand-mask: url('/brand/codeOS-logo.svg');
 }
 .brand__preview--oma {
   aspect-ratio: 722 / 300;
