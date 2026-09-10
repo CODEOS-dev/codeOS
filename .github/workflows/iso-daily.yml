@@ -16,7 +16,7 @@ jobs:
   build:
     name: 构建常规 ISO / Build Standard ISO
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     outputs:
       iso_name: ${{ steps.output.outputs.iso_name }}
     steps:
@@ -26,42 +26,46 @@ jobs:
 
       - name: 准备 / Prepare
         run: |
-          mkdir -p build/workdir/{packages,airootfs,efiboot/loader,grub,i686-pc,any,out}
+          set -euo pipefail
+          mkdir -p build/workdir/custom/airootfs out
+          # 包列表：官方仓库过滤在容器内完成（AUR 包自动跳过）
           cat install/omarchy-base.packages install/omarchy-other.packages \
-            | sed '/^#/d' | sed '/^$/d' | sort -u > build/workdir/packages/base.txt
-          echo "📦 $(wc -l < build/workdir/packages/base.txt) base packages"
-          mkdir -p build/workdir/airootfs/usr/share/omarchy
+            | sed '/^#/d' | sed '/^$/d' | sort -u \
+            > build/workdir/custom/packages.x86_64
+          echo "📦 $(wc -l < build/workdir/custom/packages.x86_64) candidate packages"
+          cp build/profile/profiledef.sh build/workdir/custom/profiledef.sh
+          # airootfs 覆盖层：codeOS 本体
+          mkdir -p build/workdir/custom/airootfs/usr/share/omarchy
           for d in bin shell themes default config install etc plans default/agents skills; do
-            [ -d "$d" ] && cp -r "$d" build/workdir/airootfs/usr/share/omarchy/
+            [ -d "$d" ] && cp -r "$d" build/workdir/custom/airootfs/usr/share/omarchy/
           done
           for f in version logo.svg README.md; do
-            [ -f "$f" ] && cp "$f" build/workdir/airootfs/usr/share/omarchy/ 2>/dev/null || true
+            [ -f "$f" ] && cp "$f" build/workdir/custom/airootfs/usr/share/omarchy/ 2>/dev/null || true
           done
-          mkdir -p build/workdir/airootfs/usr/local/bin
+          mkdir -p build/workdir/custom/airootfs/usr/local/bin
           for cmd in bin/*; do
-            ln -sf "/usr/share/omarchy/bin/$(basename "$cmd")" "build/workdir/airootfs/usr/local/bin/$(basename "$cmd")"
+            ln -sf "/usr/share/omarchy/bin/$(basename "$cmd")" "build/workdir/custom/airootfs/usr/local/bin/$(basename "$cmd")"
           done
-          ln -sf "/usr/share/omarchy/bin/omarchy" "build/workdir/airootfs/usr/local/bin/develop"
-          mkdir -p build/workdir/airootfs/etc/profile.d
-          echo 'export OMARCHY_PATH=/usr/share/omarchy' > build/workdir/airootfs/etc/profile.d/codeos.sh
-          echo 'export PATH="$OMARCHY_PATH/bin:$PATH"' >> build/workdir/airootfs/etc/profile.d/codeos.sh
-          chmod +x build/workdir/airootfs/etc/profile.d/codeos.sh
-          mkdir -p build/workdir/airootfs/etc/pacman.d
+          ln -sf "/usr/share/omarchy/bin/omarchy" "build/workdir/custom/airootfs/usr/local/bin/develop"
+          mkdir -p build/workdir/custom/airootfs/etc/profile.d
+          echo 'export OMARCHY_PATH=/usr/share/omarchy' > build/workdir/custom/airootfs/etc/profile.d/codeos.sh
+          echo 'export PATH="$OMARCHY_PATH/bin:$PATH"' >> build/workdir/custom/airootfs/etc/profile.d/codeos.sh
+          chmod +x build/workdir/custom/airootfs/etc/profile.d/codeos.sh
+          mkdir -p build/workdir/custom/airootfs/etc/pacman.d
           cat default/pacman/mirrorlist-stable default/pacman/mirrorlist-rc default/pacman/mirrorlist-edge \
-            | sed '/^#/d' | sed '/^$/d' > build/workdir/airootfs/etc/pacman.d/mirrorlist
-          echo 'LANG=zh_CN.UTF-8' > build/workdir/airootfs/etc/locale.conf
-          echo 'LANGUAGE=zh_CN:zh:en_US:en' >> build/workdir/airootfs/etc/locale.conf
-          cat >> build/workdir/airootfs/root/.bashrc << 'EOF'
+            | sed '/^#/d' | sed '/^$/d' > build/workdir/custom/airootfs/etc/pacman.d/mirrorlist
+          mkdir -p build/workdir/custom/airootfs/root
+          cat >> build/workdir/custom/airootfs/root/.bashrc << 'EOF'
           export OMARCHY_PATH=/usr/share/omarchy
           export PATH="$OMARCHY_PATH/bin:$PATH"
           alias develop=omarchy
           EOF
-          CODEOS_SIZE=$(du -sh build/workdir/airootfs/usr/share/omarchy | cut -f1)
+          CODEOS_SIZE=$(du -sh build/workdir/custom/airootfs/usr/share/omarchy | cut -f1)
           echo "✅ codeOS airootfs ($CODEOS_SIZE)"
-          cp -rn build/profile/* build/workdir/ 2>/dev/null || true
 
       - name: Docker 构建 / Build in Docker
         run: |
+          set -euo pipefail
           TS=$(date +%Y%m%d)
           ISO_NAME="codeOS-standard-daily-${TS}.iso"
           echo "iso_name=$ISO_NAME" >> "$GITHUB_ENV"
@@ -70,26 +74,34 @@ jobs:
             -v "$PWD/out:/out" \
             archlinux:latest \
             bash -c '
-          set -e
+          set -euo pipefail
           pacman-key --init && pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm archiso mkarchiso
-          cd /workdir
-          echo "#!/bin/bash" > profiledef.sh
-          echo 'iso_name="codeOS"' >> profiledef.sh
-          echo 'iso_label="codeOS '"$(date +%Y%m)"'" >> profiledef.sh
-          echo 'iso_publisher="codeOS <https://github.com/CODEOS-dev/codeOS>"' >> profiledef.sh
-          echo 'iso_application="codeOS Live ISO"' >> profiledef.sh
-          echo 'iso_version="'"$(date +%Y.%m.%d)"'" >> profiledef.sh
-          echo 'install_dir="arch"' >> profiledef.sh
-          chmod +x profiledef.sh
-          mkarchiso -v -w /tmp/iso-work -o /out \
-            -C /workdir/packages/base.txt \
-            -L "codeOS Standard Daily" \
-            -A x86_64
+          pacman -S --noconfirm archiso
+          # 以 archiso releng profile 为模板组装 codeOS profile
+          cp -a /usr/share/archiso/configs/releng /workdir/profile
+          cp /workdir/custom/packages.x86_64 /workdir/profile/packages.x86_64
+          cp /workdir/custom/profiledef.sh /workdir/profile/profiledef.sh
+          cp -a /workdir/custom/airootfs/. /workdir/profile/airootfs/
+          # 启用中文 locale（releng 的 customize_airootfs.sh 会读取 pacman.conf 的 LOCALE）
+          sed -i "s/^#LOCALE=.*/LOCALE=zh_CN.UTF-8/" /workdir/profile/pacman.conf
+          # 只保留官方仓库中存在的包（AUR 包在此过滤掉并提示）
+          : > /tmp/pkgs.filtered
+          while read -r p; do
+            [ -z "$p" ] && continue
+            if pacman -Si "$p" >/dev/null 2>&1; then
+              printf "%s\n" "$p" >> /tmp/pkgs.filtered
+            else
+              echo "  [skip] $p (AUR / not in official repos)"
+            fi
+          done < /workdir/profile/packages.x86_64
+          mv /tmp/pkgs.filtered /workdir/profile/packages.x86_64
+          echo "📦 $(wc -l < /workdir/profile/packages.x86_64) official packages"
+          cd /workdir/profile
+          mkarchiso -v -w /tmp/iso-work -o /out .
           mv /out/codeOS-*.iso "/out/'"$ISO_NAME"'" 2>/dev/null || true
           ls -lh /out/
-          ' 2>&1 | tail -60
+          ' 2>&1 | tail -80
 
       - name: 输出 / Output
         id: output
