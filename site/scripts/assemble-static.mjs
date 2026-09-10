@@ -95,7 +95,8 @@ for (const [from, to] of Object.entries(redirects)) {
 }
 
 // Required entry points must exist; optional assets may be absent in partial checkouts.
-for (const must of ['index.html', 'install', 'news/rss.xml', 'CNAME']) {
+// Note: CNAME is optional (GitHub Pages subpath deployments don't use custom domains)
+for (const must of ['index.html', 'install', 'news/rss.xml']) {
   if (!existsSync(path.join(OUT, must))) {
     console.error(`assemble: ${must} is missing from ${OUT}`)
     process.exit(1)
