@@ -154,6 +154,7 @@ jobs:
             | sed '/^#/d' | sed '/^$/d' > build/workdir/airootfs/etc/pacman.d/mirrorlist
           echo 'LANG=zh_CN.UTF-8' > build/workdir/airootfs/etc/locale.conf
           echo 'LANGUAGE=zh_CN:zh:en_US:en' >> build/workdir/airootfs/etc/locale.conf
+          mkdir -p build/workdir/airootfs/root
           cat >> build/workdir/airootfs/root/.bashrc << 'EOF'
           export OMARCHY_PATH=/usr/share/omarchy
           export PATH="$OMARCHY_PATH/bin:$PATH"

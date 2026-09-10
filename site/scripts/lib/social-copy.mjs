@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import locales from '../../src/i18n/locales.json' with { type: 'json' }
 
 export const socialKeys = [
-  'Omarchy - Beautiful, fun & agentic Linux by DHH',
+  'codeOS - Beautiful, fun & agentic Linux by DHH',
   'The malleable OS for the age of agents.',
   'Vibe your way through every alteration, tweak, or trouble.',
 ]
@@ -27,7 +27,7 @@ export function socialCopy(code) {
     return value
   })
   // The pixel wordmark already supplies the brand name above these lines.
-  const titlePrefix = /^[„“«"]?Omarchy[“”»"]?\s*[-–—:]\s*/u
+  const titlePrefix = /^[„“«"]?codeOS[“”»"]?\s*[-–—:]\s*/u
   if (!titlePrefix.test(lines[0]))
     throw new Error(`Unexpected ${code} title: ${lines[0]}`)
   lines[0] = lines[0].replace(titlePrefix, '')
