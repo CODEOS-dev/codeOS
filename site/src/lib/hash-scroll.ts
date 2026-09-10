@@ -54,7 +54,10 @@ export function useTopLink() {
     }
     event.preventDefault()
 
-    if (window.location.pathname === '/') {
+    const base = import.meta.env.BASE_URL.replace(/\/+$/, '')
+    const path = window.location.pathname
+    const atRoot = path === '/' || (base ? path === base : false)
+    if (atRoot) {
       window.scrollTo({
         top: 0,
         behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches

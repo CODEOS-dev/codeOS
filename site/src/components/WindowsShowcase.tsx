@@ -23,7 +23,7 @@ export function WindowsShowcase() {
         )}
       />
       <img
-        src="/manual/images/windows-vm.webp"
+        src={import.meta.env.BASE_URL + 'manual/images/windows-vm.webp'}
         alt={t(
           'Windows 11 running Outlook inside codeOS, with the codeOS desktop bar visible above it',
         )}

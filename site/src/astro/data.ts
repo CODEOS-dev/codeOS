@@ -16,7 +16,8 @@ const HEADING_LINK =
   /<h([23])([^>]*)>([\s\S]*?)\s*<a class="manual__heading-link"([^>]*)>#<\/a><\/h\1>/g
 
 function retargetContentsLink(html: string) {
-  return html.replace(/href="\/manual\/toc\/?"/g, 'href="/manual/"')
+  const base = import.meta.env.BASE_URL.replace(/\/+$/, '')
+  return html.replace(/href="\/manual\/toc\/?"/g, `href="${base}/manual/"`)
 }
 
 function foldHeadingLinks(html: string) {

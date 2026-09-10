@@ -15,7 +15,10 @@ export const locales = registry as Record<string, Locale>
 export const language = import.meta.env?.PUBLIC_SITE_LOCALE || 'en'
 if (!locales[language]) throw new Error(`Unknown site language: ${language}`)
 export const locale = locales[language]
-export const siteUrl = locale.domain
+/** The subpath deployment base, e.g. "/codeOS" ("" when served from root). */
+export const base = import.meta.env.BASE_URL.replace(/\/+$/, '')
+/** The absolute site root including the deployment subpath, for canonical and OG URLs. */
+export const siteUrl = `${locale.domain}${base}`
 
 /**
  * The languages in the order a list shows them: English first, since it is
@@ -47,9 +50,19 @@ export function hasTranslation(code: string, path: string): boolean {
   )
 }
 
-/** Keep untranslated chapters on the English site, including their fragments. */
+/**
+ * Keep untranslated chapters on the English site, including their fragments.
+ * Every outbound link passes through here, so the subpath deployment base
+ * (`/codeOS/`) is applied once, idempotently, to all router paths.
+ */
 export function localizedHref(href: string): string {
-  return !locale.manual && /^\/manual(?:[/?#]|$)/.test(href)
-    ? `${locales.en.domain}${href}`
-    : href
+  // Absolute or protocol-relative links pass through untouched.
+  if (/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(href) || href.startsWith('mailto:')) {
+    return href
+  }
+  if (!locale.manual && /^\/manual(?:[/?#]|$)/.test(href)) {
+    return `${locales.en.domain}${base}${href}`
+  }
+  if (base && href.startsWith(`${base}/`)) return href
+  return `${base}${href}`
 }

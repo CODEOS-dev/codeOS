@@ -60,7 +60,7 @@ export function GamingShowcase() {
             className="group block min-w-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           >
             <img
-              src={`/manual/images/${game.image}`}
+              src={`${import.meta.env.BASE_URL}manual/images/${game.image}`}
               alt={game.alt}
               width={1600}
               height={1200}

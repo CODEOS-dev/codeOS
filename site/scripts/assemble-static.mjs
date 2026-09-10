@@ -14,6 +14,8 @@ const LANGUAGE = process.env.PUBLIC_SITE_LOCALE || 'en'
 if (!Object.hasOwn(locales, LANGUAGE))
   throw new Error(`Unknown site language: ${LANGUAGE}`)
 const SITE_URL = locales[LANGUAGE].domain
+/** Matches astro.config.mjs base: the site is served under /codeOS/ on GitHub Pages. */
+const BASE = '/codeOS'
 const CONTENT_LOCALE = locales[LANGUAGE].contentLocale ?? LANGUAGE
 const OUT = path.join(
   ROOT,
@@ -71,8 +73,11 @@ const { plugins } = JSON.parse(
   await readFile(new URL('../src/data/plugins.json', import.meta.url), 'utf8'),
 )
 const redirects = createRedirects(plugins)
+/** Relative redirect targets need the subpath base; absolute ones are already final. */
+const redirectTarget = (to) => (to.startsWith('http') ? to : `${BASE}${to}`)
 for (const [from, to] of Object.entries(redirects)) {
-  const canonical = to.startsWith('http') ? to : `${SITE_URL}${to}`
+  const target = redirectTarget(to)
+  const canonical = to.startsWith('http') ? to : `${SITE_URL}${BASE}${to}`
   const file = path.join(OUT, from, 'index.html')
   await mkdir(path.dirname(file), { recursive: true })
   await writeFile(
@@ -81,17 +86,17 @@ for (const [from, to] of Object.entries(redirects)) {
 <html lang="${LANGUAGE}">
 <head>
 <meta charset="utf-8">
-<title>Redirecting to ${escapeHtml(to)}</title>
-<meta http-equiv="refresh" content="0;url=${escapeHtml(to)}">
+<title>Redirecting to ${escapeHtml(target)}</title>
+<meta http-equiv="refresh" content="0;url=${escapeHtml(target)}">
 <link rel="canonical" href="${escapeHtml(canonical)}">
 <meta name="robots" content="noindex">
-<script>window.location.replace(${JSON.stringify(to)})</script>
+<script>window.location.replace(${JSON.stringify(target)})</script>
 </head>
-<body><p>This page moved to <a href="${escapeHtml(to)}">${escapeHtml(to)}</a>.</p></body>
+<body><p>This page moved to <a href="${escapeHtml(target)}">${escapeHtml(target)}</a>.</p></body>
 </html>
 `,
   )
-  copied.push(`${from} -> ${to} (redirect page)`)
+  copied.push(`${from} -> ${target} (redirect page)`)
 }
 
 // Required entry points must exist; optional assets may be absent in partial checkouts.
@@ -109,8 +114,8 @@ for (const m of missing) console.log(`  ! not in checkout: ${m}`)
 const total = (await stat(OUT)).isDirectory() ? 'ok' : 'missing'
 console.log(`assemble: ${path.relative(ROOT, OUT)} ${total}`)
 
-// Each language build owns its domain; never ship the English CNAME to Denmark.
-await writeFile(path.join(OUT, 'CNAME'), new URL(SITE_URL).hostname + '\n')
+// GitHub Pages serves this site under /codeOS/, so no custom-domain CNAME.
+// (A CNAME file would make Pages expect a custom domain and fail the build.)
 
 if (LANGUAGE !== 'en') {
   const posts = JSON.parse(
@@ -171,15 +176,49 @@ if (LANGUAGE !== 'en') {
             !locales[LANGUAGE].manual && /^\/manual(?:[/?#]|$)/.test(href)
               ? locales.en.domain
               : SITE_URL
-          return `${attribute}="${domain}${href}"`
+          return `${attribute}="${domain}${BASE}${href}"`
         },
       )
-      const url = `${SITE_URL}${post.path}`
+      const url = `${SITE_URL}${BASE}${post.path}`
       return `<item><title>${escapeHtml(title)}</title><link>${escapeHtml(url)}</link><guid isPermaLink="true">${escapeHtml(url)}</guid><pubDate>${new Date(post.date).toUTCString()}</pubDate><description>${escapeHtml(body)}</description></item>`
     }),
   )
   await writeFile(
     path.join(OUT, 'news/rss.xml'),
-    `<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>Omarchy – ${escapeHtml(feedTitle)}</title><link>${SITE_URL}/news/</link><description>${escapeHtml(feedDescription)}</description><language>${LANGUAGE}</language>${items.join('')}</channel></rss>`,
+    `<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>codeOS – ${escapeHtml(feedTitle)}</title><link>${SITE_URL}${BASE}/news/</link><description>${escapeHtml(feedDescription)}</description><language>${LANGUAGE}</language>${items.join('')}</channel></rss>`,
   )
 }
+
+/**
+ * Rewrite root-relative asset references in the assembled HTML to carry the
+ * subpath base, e.g. href="/news/" -> href="/codeOS/news/". Astro rewrites
+ * its own imports, but literal attributes in ported pages, i18n news bodies
+ * and inline styles are assembled verbatim and need the prefix too. Fragments,
+ * protocol-relative URLs and already-prefixed paths are left alone.
+ */
+async function prefixHtmlPaths(dir) {
+  let n = 0
+  const walk = async (d) => {
+    for (const entry of await readdir(d, { withFileTypes: true })) {
+      const full = path.join(d, entry.name)
+      if (entry.isDirectory()) await walk(full)
+      else if (entry.name.endsWith('.html')) {
+        let html = await readFile(full, 'utf8')
+        const before = html
+        html = html.replace(
+          /((?:href|src|srcset|content|poster|data-src|action)=")(\/(?!\/|codeOS\/))/g,
+          `$1${BASE}$2`,
+        )
+        html = html.replace(/url\((\/(?!\/|codeOS\/))/g, `url(${BASE}$1`)
+        if (html !== before) {
+          await writeFile(full, html)
+          n++
+        }
+      }
+    }
+  }
+  await walk(dir)
+  console.log(`assemble: prefixed root paths in ${n} html files`)
+}
+
+await prefixHtmlPaths(OUT)

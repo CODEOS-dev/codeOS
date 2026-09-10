@@ -1,7 +1,7 @@
 [
  {
   "id": "core",
-  "name": "codeOS Core",
+  "name": "Omarchy Core",
   "description": "Setting the direction",
   "members": [
    {
@@ -57,7 +57,7 @@
  },
  {
   "id": "security",
-  "name": "codeOS Security",
+  "name": "Omarchy Security",
   "description": "Keeping your system safe",
   "members": [
    {
@@ -99,7 +99,7 @@
  },
  {
   "id": "design",
-  "name": "codeOS Design",
+  "name": "Omarchy Design",
   "description": "Shaping how it looks and feels",
   "members": [
    {
@@ -137,7 +137,7 @@
  },
  {
   "id": "rangers",
-  "name": "codeOS Rangers",
+  "name": "Omarchy Rangers",
   "description": "Helping others find their way",
   "members": [
    {
@@ -160,9 +160,9 @@
    }
   ],
   "note": {
-   "text": "Want to help? Apply to rangers@codeOS.org",
-   "href": "mailto:rangers@codeOS.org",
-   "linkText": "rangers@codeOS.org"
+   "text": "Want to help? Apply to rangers@omarchy.org",
+   "href": "mailto:rangers@omarchy.org",
+   "linkText": "rangers@omarchy.org"
   }
  }
 ]

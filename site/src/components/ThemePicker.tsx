@@ -20,7 +20,7 @@ import {
 import { useIsNarrow } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
 
-const previewSrc = (id: string) => `/assets/images/theme-previews/${id}.webp`
+const previewSrc = (id: string) => `${import.meta.env.BASE_URL}assets/images/theme-previews/${id}.webp`
 
 /** codeOS's card slant: a 2.5% lean, top edge shifted right of the bottom. */
 const PARALLELOGRAM = 'polygon(2.5% 0%, 100% 0%, 97.5% 100%, 0% 100%)'

@@ -914,7 +914,7 @@ function DhhQuote() {
       </blockquote>
       <figcaption className="mt-6 flex items-center gap-3.5">
         <img
-          src="/assets/images/team/dhh.webp"
+          src={import.meta.env.BASE_URL + 'assets/images/team/dhh.webp'}
           alt=""
           width={48}
           height={48}

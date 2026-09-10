@@ -69,7 +69,14 @@ export function resolveHref({ to, params, hash, search }: HrefOpts): string {
   return localizedHref(href)
 }
 
-const bare = (p: string) => (p === '/' ? p : p.replace(/\/+$/, ''))
+// The subpath deployment base, e.g. "/codeOS". Router paths stay base-free;
+// hrefs carry the base, so comparisons strip it from both sides.
+const BASE = import.meta.env.BASE_URL.replace(/\/+$/, '')
+
+const bare = (p: string) => {
+  const s = p === '/' ? p : p.replace(/\/+$/, '')
+  return BASE && s.startsWith(BASE) ? s.slice(BASE.length) || '/' : s
+}
 
 type LinkProps = {
   to?: string
@@ -184,7 +191,12 @@ export function useLocation<T = Location>(options?: {
     () => window.location.href,
     () => options?.serverPath ?? active,
   )
-  const url = new URL(href, 'https://codeOS.org')
+  // SSR renders with the router path (no window); the client resolves the
+  // real URL. For root-relative paths the origin is irrelevant, so a fixed
+  // stand-in keeps the server render deterministic.
+  const origin =
+    typeof window === 'undefined' ? 'https://codeos-dev.github.io' : window.location.origin
+  const url = new URL(href, origin)
   const location = {
     pathname: url.pathname,
     href,

@@ -1,7 +1,7 @@
 ---
 import '../styles.css'
 import '../i18n/international.css'
-import { language, locale, locales, hasTranslation, t } from '../i18n/site'
+import { language, locale, locales, hasTranslation, base, t } from '../i18n/site'
 import { ClientRouter } from 'astro:transitions'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
@@ -61,14 +61,14 @@ const ogImage = socialImage(path)
     <meta name="twitter:image" content={ogImage.url} />
     <meta name="twitter:image:alt" content={ogImage.alt} />
     <meta name="theme-color" content="#1a1b26" />
-    <link rel="icon" href="/brand/codeOS-logo.svg" type="image/svg+xml" data-theme-icon transition:persist="theme-icon" />
+    <link rel="icon" href={import.meta.env.BASE_URL + 'brand/codeOS-logo.svg'} type="image/svg+xml" data-theme-icon transition:persist="theme-icon" />
     <link rel="canonical" href={url} />
     {Object.entries(locales).filter(([code]) => hasTranslation(code, path)).map(([code, entry]) => (
-      <link rel="alternate" hreflang={code} href={`${entry.domain}${path}`} />
+      <link rel="alternate" hreflang={code} href={`${entry.domain}${base}${path}`} />
     ))}
-    <link rel="alternate" hreflang="x-default" href={`${locales.en.domain}${path}`} />
+    <link rel="alternate" hreflang="x-default" href={`${locales.en.domain}${base}${path}`} />
     <meta property="og:locale" content={locale.ogLocale} />
-    <link rel="preload" href="/brand/codeOS-wordmark.svg" as="image" type="image/svg+xml" crossorigin="anonymous" />
+    <link rel="preload" href={import.meta.env.BASE_URL + 'brand/codeOS-wordmark.svg'} as="image" type="image/svg+xml" crossorigin="anonymous" />
     <link rel="preload" href={geistWoff2} as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preload" href={monoWoff2} as="font" type="font/woff2" crossorigin="anonymous" />
     <script is:inline data-astro-rerun set:html={themeInitScript} />

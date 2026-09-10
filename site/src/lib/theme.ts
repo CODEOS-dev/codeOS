@@ -25,7 +25,7 @@ export const themeInitScript = `(function(){try{var t=localStorage.getItem(${inl
   SITE_THEMES.filter((t) => t.light).map((t) => t.id),
 )};var dark=${inlineJson(
   SITE_THEMES.filter((t) => !t.light).map((t) => t.id),
-)};if(ok.indexOf(t)<0){var pool=window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches?light:dark;t=pool[Math.floor(Math.random()*pool.length)];localStorage.setItem(${inlineJson(THEME_KEY)},t)}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme=${inlineJson(DEFAULT_THEME)}}if(!document.querySelector('link[rel="icon"][data-theme-icon]')){var l=document.createElement('link');l.rel='icon';l.type='image/svg+xml';l.href='/brand/codeOS-logo.svg';l.setAttribute('data-theme-icon','');document.head.appendChild(l)}})()`
+)};if(ok.indexOf(t)<0){var pool=window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches?light:dark;t=pool[Math.floor(Math.random()*pool.length)];localStorage.setItem(${inlineJson(THEME_KEY)},t)}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme=${inlineJson(DEFAULT_THEME)}}if(!document.querySelector('link[rel="icon"][data-theme-icon]')){var l=document.createElement('link');l.rel='icon';l.type='image/svg+xml';l.href='${import.meta.env.BASE_URL}brand/codeOS-logo.svg';l.setAttribute('data-theme-icon','');document.head.appendChild(l)}})()`
 
 export function readTheme(): string {
   try {

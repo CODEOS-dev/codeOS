@@ -120,10 +120,10 @@ export function OmarchyWordmark({
         aspectRatio: '4131 / 950',
         backgroundColor: 'currentColor',
         backgroundImage: background,
-        maskImage: 'url(/brand/codeOS-wordmark.svg)',
+        maskImage: `url(${import.meta.env.BASE_URL}brand/codeOS-wordmark.svg)`,
         maskRepeat: 'no-repeat',
         maskSize: '100% 100%',
-        WebkitMaskImage: 'url(/brand/codeOS-wordmark.svg)',
+        WebkitMaskImage: `url(${import.meta.env.BASE_URL}brand/codeOS-wordmark.svg)`,
         WebkitMaskRepeat: 'no-repeat',
         WebkitMaskSize: '100% 100%',
       }}

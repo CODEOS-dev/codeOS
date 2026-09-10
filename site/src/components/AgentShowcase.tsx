@@ -125,7 +125,7 @@ export function AgentShowcase() {
                         />
                       ) : (
                         <img
-                          src={`/images/agents/${logo}`}
+                          src={`${import.meta.env.BASE_URL}images/agents/${logo}`}
                           alt=""
                           width={24}
                           height={24}

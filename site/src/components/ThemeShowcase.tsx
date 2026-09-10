@@ -4,7 +4,7 @@ import { SITE_THEMES, THEME_EVENT, switchTheme, readTheme } from '@/lib/theme'
 import { cn } from '@/lib/utils'
 
 /** A theme's desktop screenshot, the same one the picker shows. */
-const previewSrc = (id: string) => `/assets/images/theme-previews/${id}.webp`
+const previewSrc = (id: string) => `${import.meta.env.BASE_URL}assets/images/theme-previews/${id}.webp`
 
 /** The theme the site wears right now, kept current as it changes. Null
  *  until the page is live, since the server cannot know which one the

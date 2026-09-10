@@ -554,7 +554,7 @@ export function SiteHeader({ path = '/' }: { path?: string }) {
                     data-nav-glyph
                     className="relative h-8 w-8 text-text-secondary transition-[background-color,transform] hover:text-text before:absolute before:-inset-1 lg:h-[calc(var(--pxr)*3)] lg:w-[calc(var(--pxr)*3)]"
                     nativeButton={false}
-                    render={<a href="/news/rss.xml" />}
+                    render={<a href={import.meta.env.BASE_URL + 'news/rss.xml'} />}
                   >
                     <RssIcon className="size-5" />
                   </Button>
@@ -684,7 +684,7 @@ export function SiteHeader({ path = '/' }: { path?: string }) {
               variant="outline"
               className="flex-1"
               nativeButton={false}
-              render={<a href="/news/rss.xml" />}
+              render={<a href={import.meta.env.BASE_URL + 'news/rss.xml'} />}
             >
               <RssIcon className="size-5" />
               RSS

@@ -176,7 +176,7 @@ export function SiteFooter({ path }: { path: string }) {
             .map(([code, entry]) => (
               <a
                 key={code}
-                href={`${entry.domain}${currentPath}`}
+                href={`${entry.domain}${import.meta.env.BASE_URL.replace(/\/+$/, '')}${currentPath}`}
                 hrefLang={code}
                 lang={code}
                 aria-current={language === code ? 'page' : undefined}

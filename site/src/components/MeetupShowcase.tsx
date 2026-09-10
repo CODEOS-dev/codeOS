@@ -142,7 +142,7 @@ export function MeetupShowcase({ action }: { action?: ReactNode }) {
         <p className="mt-6 text-[15px] leading-relaxed text-text-secondary">
           {t("Don't see a meetup in your city?")}{' '}
           <a
-            href="/meetups/"
+            href={import.meta.env.BASE_URL + 'meetups/'}
             className="whitespace-nowrap underline decoration-border-strong underline-offset-4 hover:text-brand hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           >
             {t('Start your own')}
