@@ -1,4 +1,6 @@
 // Reads a route head() result (the shape seo() returns) into Base props.
+import { stripBase } from '../i18n/site'
+
 type Meta =
   | { title: string }
   | { name: string; content: string }
@@ -27,7 +29,7 @@ export function headProps(
     else if ('name' in m && m.name === 'robots') robots = m.content
     else if ('property' in m && m.property === 'og:url') {
       try {
-        path = new URL(m.content).pathname
+        path = stripBase(new URL(m.content).pathname)
       } catch {
         path = m.content
       }
@@ -43,7 +45,7 @@ export function headProps(
   const canonical = (head.links ?? []).find((l) => l.rel === 'canonical')?.href
   if (canonical) {
     try {
-      path = new URL(canonical).pathname
+      path = stripBase(new URL(canonical).pathname)
     } catch {
       path = canonical
     }

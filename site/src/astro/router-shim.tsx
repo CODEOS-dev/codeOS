@@ -1,4 +1,4 @@
-import { localizedHref } from '@/i18n/site'
+import { localizedHref, stripBase } from '@/i18n/site'
 import React, { createContext, useContext, useSyncExternalStore } from 'react'
 import { navigate } from 'astro:transitions/client'
 
@@ -198,7 +198,7 @@ export function useLocation<T = Location>(options?: {
     typeof window === 'undefined' ? 'https://codeos-dev.github.io' : window.location.origin
   const url = new URL(href, origin)
   const location = {
-    pathname: url.pathname,
+    pathname: stripBase(url.pathname),
     href,
     search: url.search,
     hash: url.hash,

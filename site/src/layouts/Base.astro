@@ -1,7 +1,7 @@
 ---
 import '../styles.css'
 import '../i18n/international.css'
-import { language, locale, locales, hasTranslation, base, t } from '../i18n/site'
+import { language, locale, locales, hasTranslation, base, stripBase, t } from '../i18n/site'
 import { ClientRouter } from 'astro:transitions'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
@@ -82,13 +82,13 @@ const ogImage = socialImage(path)
       {t('Skip to content')}
     </a>
     <div class="flex min-h-dvh flex-col">
-      <SiteHeader client:load path={Astro.url.pathname} transition:persist="site-header" />
+      <SiteHeader client:load path={stripBase(Astro.url.pathname)} transition:persist="site-header" />
       <div id="main" class="relative z-10 min-h-dvh flex-1 bg-bg"><slot /></div>
-      <SiteFooter path={Astro.url.pathname} client:visible={{ rootMargin: "300px" }} />
+      <SiteFooter path={stripBase(Astro.url.pathname)} client:visible={{ rootMargin: "300px" }} />
     </div>
     <ThemePicker client:load />
     <SearchPalette client:load />
-    <MusicControl client:load path={Astro.url.pathname} transition:persist="music-control" />
+    <MusicControl client:load path={stripBase(Astro.url.pathname)} transition:persist="music-control" />
     <PixelSnap client:load />
     <script>
       import type { TransitionBeforeSwapEvent } from 'astro:transitions/client'

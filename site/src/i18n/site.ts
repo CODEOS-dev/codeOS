@@ -20,6 +20,14 @@ export const base = import.meta.env.BASE_URL.replace(/\/+$/, '')
 /** The absolute site root including the deployment subpath, for canonical and OG URLs. */
 export const siteUrl = `${locale.domain}${base}`
 
+/** Strip the deployment base from a pathname, leaving the base-free router path. */
+export function stripBase(path: string): string {
+  if (!base) return path
+  if (path === base) return '/'
+  if (path.startsWith(`${base}/`)) return path.slice(base.length) || '/'
+  return path
+}
+
 /**
  * The languages in the order a list shows them: English first, since it is
  * the source, then the rest by their own name. The registry is in the order

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { GlobeIcon } from '@/components/icons/GlobeIcon'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { hasTranslation, language, locale, sortedLocales, t } from '@/i18n/site'
+import { hasTranslation, language, locale, sortedLocales, t, base } from '@/i18n/site'
 
 function flag(domain: string, countryCode?: string) {
   const country = countryCode ?? new URL(domain).hostname.split('.').at(-1)!
@@ -64,7 +64,7 @@ export function LanguageSwitcher({ path }: { path: string }) {
                   return (
                     <a
                       key={code}
-                      href={`${destination}${hasTranslation(code, path) ? path + suffix : '/'}`}
+                      href={`${destination}${base}${hasTranslation(code, path) ? path + suffix : '/'}`}
                       hrefLang={code}
                       lang={code}
                       aria-current={code === language ? 'true' : undefined}
