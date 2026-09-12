@@ -117,7 +117,7 @@ export function OmarchyWordmark({
       aria-hidden={label ? undefined : true}
       className={className}
       style={{
-        aspectRatio: '4131 / 950',
+        aspectRatio: '164 / 34',
         backgroundColor: 'currentColor',
         backgroundImage: background,
         maskImage: `url(${import.meta.env.BASE_URL}brand/codeOS-wordmark.svg)`,

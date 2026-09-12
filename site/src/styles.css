@@ -2354,7 +2354,7 @@ h6 {
   -webkit-mask: var(--brand-mask) no-repeat center / 100% 100%;
 }
 .brand__preview--wordmark {
-  aspect-ratio: 4131 / 950;
+  aspect-ratio: 164 / 34;
   --brand-mask: url('/brand/codeOS-wordmark.svg');
 }
 .brand__preview--logo {
