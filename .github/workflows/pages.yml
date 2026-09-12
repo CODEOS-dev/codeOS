@@ -50,7 +50,15 @@ jobs:
 
       - name: Build zh-CN
         run: PUBLIC_SITE_LOCALE=zh-CN npm run build
-        continue-on-error: true
+
+      - name: Merge locale builds into the Pages artifact
+        run: |
+          if [ ! -d dist/zh-CN ]; then
+            echo "::error::zh-CN build produced no dist/zh-CN; the Chinese site would be missing"
+            exit 1
+          fi
+          mkdir -p dist/client/zh-CN
+          cp -a dist/zh-CN/. dist/client/zh-CN/
 
       - uses: actions/upload-pages-artifact@v3
         with:

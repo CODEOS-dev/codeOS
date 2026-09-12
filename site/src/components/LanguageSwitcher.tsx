@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { GlobeIcon } from '@/components/icons/GlobeIcon'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { hasTranslation, language, locale, sortedLocales, t, base } from '@/i18n/site'
+import { hasTranslation, language, locale, localeBasePath, sortedLocales, t } from '@/i18n/site'
 
 function flag(domain: string, countryCode?: string) {
   const country = countryCode ?? new URL(domain).hostname.split('.').at(-1)!
@@ -61,10 +61,13 @@ export function LanguageSwitcher({ path }: { path: string }) {
               <nav aria-label={t('Language')}>
                 {sortedLocales.map(([code, entry]) => {
                   const destination = entry.domain
+                  // Each locale has its own deployment subpath (en at /codeOS,
+                  // others at /codeOS/<code>), so the links must carry it.
+                  const route = hasTranslation(code, path) ? path + suffix : '/'
                   return (
                     <a
                       key={code}
-                      href={`${destination}${base}${hasTranslation(code, path) ? path + suffix : '/'}`}
+                      href={`${destination}${localeBasePath(code)}${route}`}
                       hrefLang={code}
                       lang={code}
                       aria-current={code === language ? 'true' : undefined}

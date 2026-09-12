@@ -9,12 +9,17 @@ const language = process.env.PUBLIC_SITE_LOCALE || 'en'
 if (!Object.hasOwn(locales, language))
   throw new Error(`Unknown site language: ${language}`)
 
+// English lives at /codeOS/, every other locale at /codeOS/<locale>/. The
+// assembler and deployment workflows share dist/client and merge the locale
+// builds under their subpaths before uploading.
+const BASE = language === 'en' ? '/codeOS/' : `/codeOS/${language}/`
+
 // The static assembler and deployment workflows share dist/client.
 export default defineConfig({
   server: { port: 3113 },
   output: 'static',
   site: locales[language].domain,
-  base: '/codeOS/',
+  base: BASE,
   trailingSlash: 'ignore',
   build: { format: 'directory' },
   outDir: language === 'en' ? './dist/client' : `./dist/${language}`,

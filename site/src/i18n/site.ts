@@ -15,10 +15,17 @@ export const locales = registry as Record<string, Locale>
 export const language = import.meta.env?.PUBLIC_SITE_LOCALE || 'en'
 if (!locales[language]) throw new Error(`Unknown site language: ${language}`)
 export const locale = locales[language]
-/** The subpath deployment base, e.g. "/codeOS" ("" when served from root). */
+/** The English site's deployment subpath; every other locale lives at base/<code>/. */
+const EN_BASE = '/codeOS'
+/** The subpath deployment base, e.g. "/codeOS/zh-CN" ("" when served from root). */
 export const base = import.meta.env.BASE_URL.replace(/\/+$/, '')
 /** The absolute site root including the deployment subpath, for canonical and OG URLs. */
 export const siteUrl = `${locale.domain}${base}`
+
+/** The deployment subpath for a given locale's site, e.g. "/codeOS" (en) or "/codeOS/zh-CN". */
+export function localeBasePath(code: string): string {
+  return code === 'en' ? EN_BASE : `${EN_BASE}/${code}`
+}
 
 /** Strip the deployment base from a pathname, leaving the base-free router path. */
 export function stripBase(path: string): string {
@@ -69,7 +76,7 @@ export function localizedHref(href: string): string {
     return href
   }
   if (!locale.manual && /^\/manual(?:[/?#]|$)/.test(href)) {
-    return `${locales.en.domain}${base}${href}`
+    return `${locales.en.domain}${EN_BASE}${href}`
   }
   if (base && href.startsWith(`${base}/`)) return href
   return `${base}${href}`

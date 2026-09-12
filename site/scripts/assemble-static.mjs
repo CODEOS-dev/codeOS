@@ -14,8 +14,8 @@ const LANGUAGE = process.env.PUBLIC_SITE_LOCALE || 'en'
 if (!Object.hasOwn(locales, LANGUAGE))
   throw new Error(`Unknown site language: ${LANGUAGE}`)
 const SITE_URL = locales[LANGUAGE].domain
-/** Matches astro.config.mjs base: the site is served under /codeOS/ on GitHub Pages. */
-const BASE = '/codeOS'
+/** Matches astro.config.mjs: English lives at /codeOS/, other locales at /codeOS/<locale>/. */
+const BASE = LANGUAGE === 'en' ? '/codeOS' : `/codeOS/${LANGUAGE}`
 const CONTENT_LOCALE = locales[LANGUAGE].contentLocale ?? LANGUAGE
 const OUT = path.join(
   ROOT,
