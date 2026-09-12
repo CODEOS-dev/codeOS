@@ -1,4 +1,4 @@
-import { t, language, sortedLocales, hasTranslation } from '@/i18n/site'
+import { t, language, sortedLocales, hasTranslation, localeBasePath } from '@/i18n/site'
 import { Link } from '@tanstack/react-router'
 import { OmarchyWordmark } from '@/components/Brand'
 import { PixelBackdrop } from '@/components/HeroShader'
@@ -176,7 +176,7 @@ export function SiteFooter({ path }: { path: string }) {
             .map(([code, entry]) => (
               <a
                 key={code}
-                href={`${entry.domain}${import.meta.env.BASE_URL.replace(/\/+$/, '')}${currentPath}`}
+                href={`${entry.domain}${localeBasePath(code)}${currentPath}`}
                 hrefLang={code}
                 lang={code}
                 aria-current={language === code ? 'page' : undefined}
