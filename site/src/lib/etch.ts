@@ -46,9 +46,11 @@ type Ttfx = {
   ) => Session
 }
 
-const SCRIPT = '/ttfx/0.3.2/ttfx.js'
+// public/ assets resolve under the deployment subpath (e.g. /codeOS/), so the
+// root-relative /ttfx/... URLs 404 once the site lives under one.
+const SCRIPT = `${import.meta.env.BASE_URL}ttfx/0.3.2/ttfx.js`
 /** Every effect in one build: the one the screensaver page already ships. */
-const WASM = '/ttfx/effects/all.wasm'
+const WASM = `${import.meta.env.BASE_URL}ttfx/effects/all.wasm`
 /**
  * What plays unless the address says otherwise (?etch=beams): a different
  * effect each time, drawn from the whole set, never the same one twice
